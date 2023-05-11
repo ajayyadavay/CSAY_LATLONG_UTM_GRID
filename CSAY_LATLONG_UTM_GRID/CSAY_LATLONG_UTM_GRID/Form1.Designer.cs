@@ -35,8 +35,10 @@
             this.calculateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.baseLineEqParameterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.CalcverticalGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.gridCOORDParallelToBaselineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.drawToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.DrawverticalGridLinesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.gridlinesParallelToBaselineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -67,8 +69,9 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.gMapControl1 = new GMap.NET.WindowsForms.GMapControl();
-            this.gridCOORDParallelToBaselineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.gridlinesParallelToBaselineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.kMLOfGridlinesParallelToNorthToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.kMLOfGridlinesParallelToNorthToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -88,7 +91,8 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.calculateToolStripMenuItem,
-            this.drawToolStripMenuItem});
+            this.drawToolStripMenuItem,
+            this.exportToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1370, 28);
@@ -145,6 +149,13 @@
             this.CalcverticalGridToolStripMenuItem.Text = "Grid COORD Parallel to North";
             this.CalcverticalGridToolStripMenuItem.Click += new System.EventHandler(this.CalcverticalGridToolStripMenuItem_Click);
             // 
+            // gridCOORDParallelToBaselineToolStripMenuItem
+            // 
+            this.gridCOORDParallelToBaselineToolStripMenuItem.Name = "gridCOORDParallelToBaselineToolStripMenuItem";
+            this.gridCOORDParallelToBaselineToolStripMenuItem.Size = new System.Drawing.Size(290, 24);
+            this.gridCOORDParallelToBaselineToolStripMenuItem.Text = "Grid COORD Parallel to Baseline";
+            this.gridCOORDParallelToBaselineToolStripMenuItem.Click += new System.EventHandler(this.gridCOORDParallelToBaselineToolStripMenuItem_Click);
+            // 
             // drawToolStripMenuItem
             // 
             this.drawToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -158,9 +169,16 @@
             // DrawverticalGridLinesToolStripMenuItem
             // 
             this.DrawverticalGridLinesToolStripMenuItem.Name = "DrawverticalGridLinesToolStripMenuItem";
-            this.DrawverticalGridLinesToolStripMenuItem.Size = new System.Drawing.Size(252, 24);
+            this.DrawverticalGridLinesToolStripMenuItem.Size = new System.Drawing.Size(265, 24);
             this.DrawverticalGridLinesToolStripMenuItem.Text = "Gridlines Parallel to North ";
             this.DrawverticalGridLinesToolStripMenuItem.Click += new System.EventHandler(this.DrawverticalGridLinesToolStripMenuItem_Click);
+            // 
+            // gridlinesParallelToBaselineToolStripMenuItem
+            // 
+            this.gridlinesParallelToBaselineToolStripMenuItem.Name = "gridlinesParallelToBaselineToolStripMenuItem";
+            this.gridlinesParallelToBaselineToolStripMenuItem.Size = new System.Drawing.Size(265, 24);
+            this.gridlinesParallelToBaselineToolStripMenuItem.Text = "Gridlines Parallel to Baseline";
+            this.gridlinesParallelToBaselineToolStripMenuItem.Click += new System.EventHandler(this.gridlinesParallelToBaselineToolStripMenuItem_Click);
             // 
             // tabControl1
             // 
@@ -254,7 +272,6 @@
             this.TxtNlines.Name = "TxtNlines";
             this.TxtNlines.Size = new System.Drawing.Size(134, 24);
             this.TxtNlines.TabIndex = 5;
-            this.TxtNlines.Text = "4000";
             // 
             // label2
             // 
@@ -455,19 +472,28 @@
             this.gMapControl1.TabIndex = 0;
             this.gMapControl1.Zoom = 0D;
             // 
-            // gridCOORDParallelToBaselineToolStripMenuItem
+            // exportToolStripMenuItem
             // 
-            this.gridCOORDParallelToBaselineToolStripMenuItem.Name = "gridCOORDParallelToBaselineToolStripMenuItem";
-            this.gridCOORDParallelToBaselineToolStripMenuItem.Size = new System.Drawing.Size(290, 24);
-            this.gridCOORDParallelToBaselineToolStripMenuItem.Text = "Grid COORD Parallel to Baseline";
-            this.gridCOORDParallelToBaselineToolStripMenuItem.Click += new System.EventHandler(this.gridCOORDParallelToBaselineToolStripMenuItem_Click);
+            this.exportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.kMLOfGridlinesParallelToNorthToolStripMenuItem,
+            this.kMLOfGridlinesParallelToNorthToolStripMenuItem1});
+            this.exportToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(84, 24);
+            this.exportToolStripMenuItem.Text = "Export To";
             // 
-            // gridlinesParallelToBaselineToolStripMenuItem
+            // kMLOfGridlinesParallelToNorthToolStripMenuItem
             // 
-            this.gridlinesParallelToBaselineToolStripMenuItem.Name = "gridlinesParallelToBaselineToolStripMenuItem";
-            this.gridlinesParallelToBaselineToolStripMenuItem.Size = new System.Drawing.Size(265, 24);
-            this.gridlinesParallelToBaselineToolStripMenuItem.Text = "Gridlines Parallel to Baseline";
-            this.gridlinesParallelToBaselineToolStripMenuItem.Click += new System.EventHandler(this.gridlinesParallelToBaselineToolStripMenuItem_Click);
+            this.kMLOfGridlinesParallelToNorthToolStripMenuItem.Name = "kMLOfGridlinesParallelToNorthToolStripMenuItem";
+            this.kMLOfGridlinesParallelToNorthToolStripMenuItem.Size = new System.Drawing.Size(308, 24);
+            this.kMLOfGridlinesParallelToNorthToolStripMenuItem.Text = "KML - Gridlines Parallel to North";
+            // 
+            // kMLOfGridlinesParallelToNorthToolStripMenuItem1
+            // 
+            this.kMLOfGridlinesParallelToNorthToolStripMenuItem1.Name = "kMLOfGridlinesParallelToNorthToolStripMenuItem1";
+            this.kMLOfGridlinesParallelToNorthToolStripMenuItem1.Size = new System.Drawing.Size(308, 24);
+            this.kMLOfGridlinesParallelToNorthToolStripMenuItem1.Text = "KML - Gridlines Parallel to baseline";
+            this.kMLOfGridlinesParallelToNorthToolStripMenuItem1.Click += new System.EventHandler(this.kMLOfGridlinesParallelToNorthToolStripMenuItem1_Click);
             // 
             // FrmMainGrid
             // 
@@ -546,6 +572,9 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ToolStripMenuItem gridCOORDParallelToBaselineToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem gridlinesParallelToBaselineToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem kMLOfGridlinesParallelToNorthToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem kMLOfGridlinesParallelToNorthToolStripMenuItem1;
     }
 }
 

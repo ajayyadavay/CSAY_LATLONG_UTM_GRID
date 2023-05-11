@@ -11,6 +11,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using SharpKml.Dom;
+using SharpKml.Base;
+using SharpKml.Engine;
+using System.Reflection.Emit;
 
 namespace CSAY_LATLONG_UTM_GRID
 {
@@ -342,13 +346,13 @@ namespace CSAY_LATLONG_UTM_GRID
             G1 = perp_dist;
             double m1 = m;
             double c1  = CSAYGeoFun.Intercept_of_Parallel_line(m, c, G1, 1);
-            MessageBox.Show("m1, c1 = " + m1.ToString() + "," + c1.ToString());
+            //MessageBox.Show("m1, c1 = " + m1.ToString() + "," + c1.ToString());
       
 
             //Eq of perpendicular line to EF i.e. vertical origin axis YY'
             double m2 = -1.0 / m;
             double c2 = ARP_Y - ARP_X * m2 ;
-            MessageBox.Show("m2, c2 = " + m2.ToString() + "," + c2.ToString());
+            //MessageBox.Show("m2, c2 = " + m2.ToString() + "," + c2.ToString());
 
             double[] slopes = new double[] { m2, m2, m1, m1 };
             double[] intercepts = new double[] { c2, c2, c1, c1 };
@@ -519,7 +523,6 @@ namespace CSAY_LATLONG_UTM_GRID
             latav = (lat1 + lat2) / 2;
             longav = (long1 + long2) / 2;
 
-
             GMap.NET.GMaps.Instance.Mode = GMap.NET.AccessMode.ServerAndCache;
             gMapControl1.DragButton = MouseButtons.Left;
             gMapControl1.MouseWheelZoomEnabled = true;
@@ -534,6 +537,7 @@ namespace CSAY_LATLONG_UTM_GRID
             int nline, LineStroke;
             nline = Convert.ToInt32(TxtNlines.Text);
             
+            //Vertical lines
             Linecolor = Color.Red;
             LineStroke = 1;
             for (int i = First_V_Row; i < Last_V_Row; i += 2)
@@ -547,6 +551,7 @@ namespace CSAY_LATLONG_UTM_GRID
                 DrawLinesWithTwoPoints(lat1, long1, lat2, long2, Linecolor, LineStroke);
             }
 
+            //Horizontal lines
             Linecolor = Color.Blue;
             LineStroke = 1;
             nline = Convert.ToInt32(TxtNlines.Text);
@@ -561,7 +566,7 @@ namespace CSAY_LATLONG_UTM_GRID
                 DrawLinesWithTwoPoints(lat1, long1, lat2, long2, Linecolor, LineStroke);
             }
 
-            //Draw origin vertical line
+            //Draw origin line
             Linecolor = Color.Yellow;
             LineStroke = 2;
             nline = Convert.ToInt32(TxtNlines.Text);
@@ -577,6 +582,220 @@ namespace CSAY_LATLONG_UTM_GRID
             }
 
             gMapControl1.Zoom += 0.1;
+        }
+
+        private void kMLOfGridlinesParallelToNorthToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            double lat1, long1, lat2, long2, lat_ARP, Long_ARP;
+            string MyFolder  = CreateBaseAccessProjectFolders();
+            /*var folder_GL = new SharpKml.Dom.Folder
+            {
+                Description = new SharpKml.Dom.Description
+                {
+                    Text = "Folder contains Gridlines Hz and Vertical adn origin axes"
+                },
+                Name = "Folder_Gridlines_" + TxtAirportCode.Text
+            };*/
+
+            var document_ARP = new SharpKml.Dom.Document
+            {
+                Description = new SharpKml.Dom.Description
+                {
+                    Text = "Doc Vertical Gridlines Perpendicular to Base line"
+                },
+                Name = "ARP_" + TxtAirportCode.Text
+            };
+
+            
+            //take lat long input from text boxes
+            lat_ARP = Convert.ToDouble(dataGridView1.Rows[0].Cells[3].Value);
+            Long_ARP = Convert.ToDouble(dataGridView1.Rows[0].Cells[4].Value);
+
+            // This will be used for the placemark-----------------
+            var point_ARP = new SharpKml.Dom.Point
+            {
+                Coordinate = new SharpKml.Base.Vector(lat_ARP, Long_ARP)
+            };
+
+            var placemark_ARP = new SharpKml.Dom.Placemark
+            {
+                Name = "ARP_" + TxtAirportCode.Text,
+                Geometry = point_ARP
+            };
+            document_ARP.AddFeature(placemark_ARP);
+            //folder_GL.AddFeature(document_ARP);
+
+            // This is the root element of the file--------------------------
+            var kml = new Kml
+            {
+                Feature = document_ARP
+            };
+            var serializer = new Serializer();
+            //string kmlfilename = Environment.CurrentDirectory + "\\KML_Files" + "\\ThisKML.kml";
+            string kmlfilename = MyFolder + "ARP.kml";
+            FileStream fileStream = new FileStream(kmlfilename, FileMode.Append);
+            serializer.Serialize(kml, fileStream);
+
+
+
+            //Vertical lines
+            var document_Ver = new SharpKml.Dom.Document
+            {
+                Description = new SharpKml.Dom.Description
+                {
+                    Text = "Doc Vertical Gridlines Perpendicular to Base line"
+                },
+                Name = "Vertical Gridlines"
+            };
+
+            ///Style 1
+            SharpKml.Dom.LineStyle lineStyle = new SharpKml.Dom.LineStyle();
+            lineStyle.Color = Color32.Parse("#FF0000");
+            lineStyle.Width = 12;
+
+            SharpKml.Dom.Style SimpleStyle = new SharpKml.Dom.Style();
+            SimpleStyle.Id = "Style1";
+            SimpleStyle.Line = lineStyle;
+            document_Ver.AddStyle(SimpleStyle);
+            for (int i = First_V_Row; i < Last_V_Row; i += 2)
+            {
+                lat1 = Convert.ToDouble(dataGridView1.Rows[i].Cells[3].Value);
+                long1 = Convert.ToDouble(dataGridView1.Rows[i].Cells[4].Value);
+
+                lat2 = Convert.ToDouble(dataGridView1.Rows[i + 1].Cells[3].Value);
+                long2 = Convert.ToDouble(dataGridView1.Rows[i + 1].Cells[4].Value);
+
+                LineString linestring = new LineString();
+                CoordinateCollection coordinates = new CoordinateCollection();
+                coordinates.Add(new SharpKml.Base.Vector(lat1, long1));
+                coordinates.Add(new SharpKml.Base.Vector(lat2, long2));
+
+                linestring.Coordinates = coordinates;
+                SharpKml.Dom.Placemark placemark_line = new SharpKml.Dom.Placemark();
+                placemark_line.Name = "GridLines_Vertical_" + i.ToString();
+                placemark_line.Geometry = linestring;
+
+                document_Ver.AddFeature(placemark_line);
+            }
+
+            //folder_GL.AddFeature(document_Ver);
+            var kmlV = new Kml
+            {
+                Feature = document_Ver
+            };
+            string kmlfilenameV = MyFolder + "VerticalGridlines.kml";
+            FileStream fileStreamV = new FileStream(kmlfilenameV, FileMode.Append);
+            serializer.Serialize(kmlV, fileStreamV);
+
+
+
+
+
+            //Horizontal lines-------------------------------------------------------------------------
+            var document_Hz = new SharpKml.Dom.Document
+            {
+                Description = new SharpKml.Dom.Description
+                {
+                    Text = "Doc Horizontal Gridlines Parallel to Base line"
+                },
+                Name = "Horizontal Gridlines"
+            };
+            for (int i = First_Hz_Row; i < Last_Hz_Row; i += 2)
+            {
+                lat1 = Convert.ToDouble(dataGridView1.Rows[i].Cells[3].Value);
+                long1 = Convert.ToDouble(dataGridView1.Rows[i].Cells[4].Value);
+
+                lat2 = Convert.ToDouble(dataGridView1.Rows[i + 1].Cells[3].Value);
+                long2 = Convert.ToDouble(dataGridView1.Rows[i + 1].Cells[4].Value);
+
+                LineString linestring = new LineString();
+                CoordinateCollection coordinates = new CoordinateCollection();
+                coordinates.Add(new SharpKml.Base.Vector(lat1, long1));
+                coordinates.Add(new SharpKml.Base.Vector(lat2, long2));
+
+                linestring.Coordinates = coordinates;
+                SharpKml.Dom.Placemark placemark_line1 = new SharpKml.Dom.Placemark();
+                placemark_line1.Name = "GridLines_Horizontal_" + i.ToString();
+                placemark_line1.Geometry = linestring;
+
+                document_Hz.AddFeature(placemark_line1);
+            }
+            //folder_GL.AddFeature(document_Hz);
+
+            var kmlH = new Kml
+            {
+                Feature = document_Hz
+            };
+            string kmlfilenameH = MyFolder + "Hz_Gridlines.kml";
+            FileStream fileStreamH = new FileStream(kmlfilenameH, FileMode.Append);
+            serializer.Serialize(kmlH, fileStreamH);
+
+
+
+            //Draw origin line---------------------------------------------------------------------
+            var document_Or = new SharpKml.Dom.Document
+            {
+                Description = new SharpKml.Dom.Description
+                {
+                    Text = "Doc Origin axes Gridlines"
+                },
+                Name = "Origin Gridlines"
+            };
+            for (int i = 7; i <= 10; i += 2)
+            {
+                lat1 = Convert.ToDouble(dataGridView1.Rows[i].Cells[3].Value);
+                long1 = Convert.ToDouble(dataGridView1.Rows[i].Cells[4].Value);
+
+                lat2 = Convert.ToDouble(dataGridView1.Rows[i + 1].Cells[3].Value);
+                long2 = Convert.ToDouble(dataGridView1.Rows[i + 1].Cells[4].Value);
+
+                LineString linestring = new LineString();
+                CoordinateCollection coordinates = new CoordinateCollection();
+                coordinates.Add(new SharpKml.Base.Vector(lat1, long1));
+                coordinates.Add(new SharpKml.Base.Vector(lat2, long2));
+
+                linestring.Coordinates = coordinates;
+                SharpKml.Dom.Placemark placemark_line2 = new SharpKml.Dom.Placemark();
+                placemark_line2.Name = "GridLines_Origin_" + i.ToString();
+                placemark_line2.Geometry = linestring;
+
+                document_Or.AddFeature(placemark_line2);
+            }
+            //folder_GL.AddFeature(document_Or);
+            var kmlOr = new Kml
+            {
+                Feature = document_Or
+            };
+            //string kmlfilename = Environment.CurrentDirectory + "\\KML_Files" + "\\ThisKML.kml";
+            string kmlfilenameOr = MyFolder + "Origin Axes.kml";
+            FileStream fileStreamOr = new FileStream(kmlfilenameOr, FileMode.Append);
+            serializer.Serialize(kmlOr, fileStreamOr);
+
+
+            MessageBox.Show("Successfully exported to KML");
+        }
+
+        private string CreateBaseAccessProjectFolders()
+        {
+            string A_Code;
+
+            if (TxtAirportCode.Text == "")
+            {
+                A_Code = "New_Airport";
+            }
+            else
+            {
+                A_Code = TxtAirportCode.Text;
+            }
+            
+           string Project_Folders = Environment.CurrentDirectory + "\\Grid_Project_Folders\\BaseGridLine\\" + A_Code + "\\";
+
+            if (!Directory.Exists(Project_Folders))
+            {
+                Directory.CreateDirectory(Project_Folders);
+            }
+
+            return Project_Folders;
         }
 
         private void DrawverticalGridLinesToolStripMenuItem_Click(object sender, EventArgs e)

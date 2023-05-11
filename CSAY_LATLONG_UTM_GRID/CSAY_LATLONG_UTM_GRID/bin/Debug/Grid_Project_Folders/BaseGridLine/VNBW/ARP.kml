@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>ARP_VNBW</name>
+    <description>Doc Vertical Gridlines Perpendicular to Base line</description>
+    <Placemark>
+      <name>ARP_VNBW</name>
+      <Point>
+        <coordinates>83.418035869999997,27.507350890000001</coordinates>
+      </Point>
+    </Placemark>
+  </Document>
+</kml>
