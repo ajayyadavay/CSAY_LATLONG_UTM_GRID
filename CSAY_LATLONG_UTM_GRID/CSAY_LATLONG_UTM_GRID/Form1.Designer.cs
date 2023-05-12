@@ -31,14 +31,22 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.LoadRWYdataStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearAllLayersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.calculateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.baseLineEqParameterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.CalcverticalGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.gridCOORDParallelToBaselineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.CalcverticalGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.drawToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.DrawverticalGridLinesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.gridlinesParallelToBaselineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.circleCenteredAtARPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.kMLOfGridlinesParallelToNorthToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.kMLCircleCenteredAtARPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.modeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.baselineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.northToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -69,9 +77,13 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.gMapControl1 = new GMap.NET.WindowsForms.GMapControl();
-            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.kMLOfGridlinesParallelToNorthToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.kMLOfGridlinesParallelToNorthToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
+            this.autoProcessToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.northModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.baselineModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -92,7 +104,9 @@
             this.fileToolStripMenuItem,
             this.calculateToolStripMenuItem,
             this.drawToolStripMenuItem,
-            this.exportToolStripMenuItem});
+            this.exportToolStripMenuItem,
+            this.settingToolStripMenuItem,
+            this.autoProcessToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1370, 28);
@@ -103,6 +117,10 @@
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.LoadRWYdataStripMenuItem1,
+            this.toolStripMenuItem2,
+            this.clearAllLayersToolStripMenuItem,
+            this.toolStripMenuItem1,
+            this.aboutToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
@@ -116,6 +134,13 @@
             this.LoadRWYdataStripMenuItem1.Text = "Load RWY data";
             this.LoadRWYdataStripMenuItem1.Click += new System.EventHandler(this.LoadRWYdataStripMenuItem1_Click);
             // 
+            // clearAllLayersToolStripMenuItem
+            // 
+            this.clearAllLayersToolStripMenuItem.Name = "clearAllLayersToolStripMenuItem";
+            this.clearAllLayersToolStripMenuItem.Size = new System.Drawing.Size(180, 24);
+            this.clearAllLayersToolStripMenuItem.Text = "Clear All Layers";
+            this.clearAllLayersToolStripMenuItem.Click += new System.EventHandler(this.clearAllLayersToolStripMenuItem_Click);
+            // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.BackColor = System.Drawing.Color.Transparent;
@@ -128,8 +153,9 @@
             // 
             this.calculateToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.baseLineEqParameterToolStripMenuItem,
-            this.CalcverticalGridToolStripMenuItem,
-            this.gridCOORDParallelToBaselineToolStripMenuItem});
+            this.gridCOORDParallelToBaselineToolStripMenuItem,
+            this.toolStripMenuItem3,
+            this.CalcverticalGridToolStripMenuItem});
             this.calculateToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.calculateToolStripMenuItem.Name = "calculateToolStripMenuItem";
             this.calculateToolStripMenuItem.Size = new System.Drawing.Size(82, 24);
@@ -142,13 +168,6 @@
             this.baseLineEqParameterToolStripMenuItem.Text = "Base line Eq parameter";
             this.baseLineEqParameterToolStripMenuItem.Click += new System.EventHandler(this.baseLineEqParameterToolStripMenuItem_Click);
             // 
-            // CalcverticalGridToolStripMenuItem
-            // 
-            this.CalcverticalGridToolStripMenuItem.Name = "CalcverticalGridToolStripMenuItem";
-            this.CalcverticalGridToolStripMenuItem.Size = new System.Drawing.Size(290, 24);
-            this.CalcverticalGridToolStripMenuItem.Text = "Grid COORD Parallel to North";
-            this.CalcverticalGridToolStripMenuItem.Click += new System.EventHandler(this.CalcverticalGridToolStripMenuItem_Click);
-            // 
             // gridCOORDParallelToBaselineToolStripMenuItem
             // 
             this.gridCOORDParallelToBaselineToolStripMenuItem.Name = "gridCOORDParallelToBaselineToolStripMenuItem";
@@ -156,29 +175,97 @@
             this.gridCOORDParallelToBaselineToolStripMenuItem.Text = "Grid COORD Parallel to Baseline";
             this.gridCOORDParallelToBaselineToolStripMenuItem.Click += new System.EventHandler(this.gridCOORDParallelToBaselineToolStripMenuItem_Click);
             // 
+            // CalcverticalGridToolStripMenuItem
+            // 
+            this.CalcverticalGridToolStripMenuItem.Enabled = false;
+            this.CalcverticalGridToolStripMenuItem.Name = "CalcverticalGridToolStripMenuItem";
+            this.CalcverticalGridToolStripMenuItem.Size = new System.Drawing.Size(290, 24);
+            this.CalcverticalGridToolStripMenuItem.Text = "Grid COORD Parallel to North";
+            this.CalcverticalGridToolStripMenuItem.Click += new System.EventHandler(this.CalcverticalGridToolStripMenuItem_Click);
+            // 
             // drawToolStripMenuItem
             // 
             this.drawToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.DrawverticalGridLinesToolStripMenuItem,
-            this.gridlinesParallelToBaselineToolStripMenuItem});
+            this.gridlinesParallelToBaselineToolStripMenuItem,
+            this.circleCenteredAtARPToolStripMenuItem});
             this.drawToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.drawToolStripMenuItem.Name = "drawToolStripMenuItem";
             this.drawToolStripMenuItem.Size = new System.Drawing.Size(56, 24);
             this.drawToolStripMenuItem.Text = "Draw";
             // 
-            // DrawverticalGridLinesToolStripMenuItem
-            // 
-            this.DrawverticalGridLinesToolStripMenuItem.Name = "DrawverticalGridLinesToolStripMenuItem";
-            this.DrawverticalGridLinesToolStripMenuItem.Size = new System.Drawing.Size(265, 24);
-            this.DrawverticalGridLinesToolStripMenuItem.Text = "Gridlines Parallel to North ";
-            this.DrawverticalGridLinesToolStripMenuItem.Click += new System.EventHandler(this.DrawverticalGridLinesToolStripMenuItem_Click);
-            // 
             // gridlinesParallelToBaselineToolStripMenuItem
             // 
             this.gridlinesParallelToBaselineToolStripMenuItem.Name = "gridlinesParallelToBaselineToolStripMenuItem";
-            this.gridlinesParallelToBaselineToolStripMenuItem.Size = new System.Drawing.Size(265, 24);
-            this.gridlinesParallelToBaselineToolStripMenuItem.Text = "Gridlines Parallel to Baseline";
+            this.gridlinesParallelToBaselineToolStripMenuItem.Size = new System.Drawing.Size(248, 24);
+            this.gridlinesParallelToBaselineToolStripMenuItem.Text = "Gridlines Centered at ARP";
             this.gridlinesParallelToBaselineToolStripMenuItem.Click += new System.EventHandler(this.gridlinesParallelToBaselineToolStripMenuItem_Click);
+            // 
+            // circleCenteredAtARPToolStripMenuItem
+            // 
+            this.circleCenteredAtARPToolStripMenuItem.Name = "circleCenteredAtARPToolStripMenuItem";
+            this.circleCenteredAtARPToolStripMenuItem.Size = new System.Drawing.Size(248, 24);
+            this.circleCenteredAtARPToolStripMenuItem.Text = "Circle centered at ARP";
+            this.circleCenteredAtARPToolStripMenuItem.Click += new System.EventHandler(this.circleCenteredAtARPToolStripMenuItem_Click);
+            // 
+            // exportToolStripMenuItem
+            // 
+            this.exportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.kMLOfGridlinesParallelToNorthToolStripMenuItem1,
+            this.kMLCircleCenteredAtARPToolStripMenuItem});
+            this.exportToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(84, 24);
+            this.exportToolStripMenuItem.Text = "Export To";
+            // 
+            // kMLOfGridlinesParallelToNorthToolStripMenuItem1
+            // 
+            this.kMLOfGridlinesParallelToNorthToolStripMenuItem1.Name = "kMLOfGridlinesParallelToNorthToolStripMenuItem1";
+            this.kMLOfGridlinesParallelToNorthToolStripMenuItem1.Size = new System.Drawing.Size(291, 24);
+            this.kMLOfGridlinesParallelToNorthToolStripMenuItem1.Text = "KML - Gridlines Centered at ARP";
+            this.kMLOfGridlinesParallelToNorthToolStripMenuItem1.Click += new System.EventHandler(this.kMLOfGridlinesParallelToNorthToolStripMenuItem1_Click);
+            // 
+            // kMLCircleCenteredAtARPToolStripMenuItem
+            // 
+            this.kMLCircleCenteredAtARPToolStripMenuItem.Name = "kMLCircleCenteredAtARPToolStripMenuItem";
+            this.kMLCircleCenteredAtARPToolStripMenuItem.Size = new System.Drawing.Size(291, 24);
+            this.kMLCircleCenteredAtARPToolStripMenuItem.Text = "KML - Circle Centered at ARP";
+            this.kMLCircleCenteredAtARPToolStripMenuItem.Click += new System.EventHandler(this.kMLCircleCenteredAtARPToolStripMenuItem_Click);
+            // 
+            // settingToolStripMenuItem
+            // 
+            this.settingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.modeToolStripMenuItem});
+            this.settingToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.settingToolStripMenuItem.Name = "settingToolStripMenuItem";
+            this.settingToolStripMenuItem.Size = new System.Drawing.Size(68, 24);
+            this.settingToolStripMenuItem.Text = "Setting";
+            // 
+            // modeToolStripMenuItem
+            // 
+            this.modeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.baselineToolStripMenuItem,
+            this.northToolStripMenuItem});
+            this.modeToolStripMenuItem.Name = "modeToolStripMenuItem";
+            this.modeToolStripMenuItem.Size = new System.Drawing.Size(117, 24);
+            this.modeToolStripMenuItem.Text = "Mode";
+            // 
+            // baselineToolStripMenuItem
+            // 
+            this.baselineToolStripMenuItem.Checked = true;
+            this.baselineToolStripMenuItem.CheckOnClick = true;
+            this.baselineToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.baselineToolStripMenuItem.Name = "baselineToolStripMenuItem";
+            this.baselineToolStripMenuItem.Size = new System.Drawing.Size(133, 24);
+            this.baselineToolStripMenuItem.Text = "Baseline";
+            this.baselineToolStripMenuItem.Click += new System.EventHandler(this.baselineToolStripMenuItem_Click);
+            // 
+            // northToolStripMenuItem
+            // 
+            this.northToolStripMenuItem.CheckOnClick = true;
+            this.northToolStripMenuItem.Name = "northToolStripMenuItem";
+            this.northToolStripMenuItem.Size = new System.Drawing.Size(133, 24);
+            this.northToolStripMenuItem.Text = "North";
+            this.northToolStripMenuItem.Click += new System.EventHandler(this.northToolStripMenuItem_Click);
             // 
             // tabControl1
             // 
@@ -472,28 +559,52 @@
             this.gMapControl1.TabIndex = 0;
             this.gMapControl1.Zoom = 0D;
             // 
-            // exportToolStripMenuItem
+            // aboutToolStripMenuItem
             // 
-            this.exportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.kMLOfGridlinesParallelToNorthToolStripMenuItem,
-            this.kMLOfGridlinesParallelToNorthToolStripMenuItem1});
-            this.exportToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-            this.exportToolStripMenuItem.Size = new System.Drawing.Size(84, 24);
-            this.exportToolStripMenuItem.Text = "Export To";
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 24);
+            this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // kMLOfGridlinesParallelToNorthToolStripMenuItem
+            // toolStripMenuItem2
             // 
-            this.kMLOfGridlinesParallelToNorthToolStripMenuItem.Name = "kMLOfGridlinesParallelToNorthToolStripMenuItem";
-            this.kMLOfGridlinesParallelToNorthToolStripMenuItem.Size = new System.Drawing.Size(308, 24);
-            this.kMLOfGridlinesParallelToNorthToolStripMenuItem.Text = "KML - Gridlines Parallel to North";
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(177, 6);
             // 
-            // kMLOfGridlinesParallelToNorthToolStripMenuItem1
+            // toolStripMenuItem1
             // 
-            this.kMLOfGridlinesParallelToNorthToolStripMenuItem1.Name = "kMLOfGridlinesParallelToNorthToolStripMenuItem1";
-            this.kMLOfGridlinesParallelToNorthToolStripMenuItem1.Size = new System.Drawing.Size(308, 24);
-            this.kMLOfGridlinesParallelToNorthToolStripMenuItem1.Text = "KML - Gridlines Parallel to baseline";
-            this.kMLOfGridlinesParallelToNorthToolStripMenuItem1.Click += new System.EventHandler(this.kMLOfGridlinesParallelToNorthToolStripMenuItem1_Click);
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(177, 6);
+            // 
+            // toolStripMenuItem3
+            // 
+            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(287, 6);
+            // 
+            // autoProcessToolStripMenuItem
+            // 
+            this.autoProcessToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.baselineModeToolStripMenuItem,
+            this.northModeToolStripMenuItem});
+            this.autoProcessToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.autoProcessToolStripMenuItem.Name = "autoProcessToolStripMenuItem";
+            this.autoProcessToolStripMenuItem.Size = new System.Drawing.Size(106, 24);
+            this.autoProcessToolStripMenuItem.Text = "Auto Process";
+            // 
+            // northModeToolStripMenuItem
+            // 
+            this.northModeToolStripMenuItem.Enabled = false;
+            this.northModeToolStripMenuItem.Name = "northModeToolStripMenuItem";
+            this.northModeToolStripMenuItem.Size = new System.Drawing.Size(180, 24);
+            this.northModeToolStripMenuItem.Text = "North Mode";
+            this.northModeToolStripMenuItem.Click += new System.EventHandler(this.northModeToolStripMenuItem_Click);
+            // 
+            // baselineModeToolStripMenuItem
+            // 
+            this.baselineModeToolStripMenuItem.Name = "baselineModeToolStripMenuItem";
+            this.baselineModeToolStripMenuItem.Size = new System.Drawing.Size(180, 24);
+            this.baselineModeToolStripMenuItem.Text = "Baseline Mode";
+            this.baselineModeToolStripMenuItem.Click += new System.EventHandler(this.baselineModeToolStripMenuItem_Click);
             // 
             // FrmMainGrid
             // 
@@ -567,14 +678,26 @@
         private System.Windows.Forms.ToolStripMenuItem baseLineEqParameterToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem CalcverticalGridToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem drawToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem DrawverticalGridLinesToolStripMenuItem;
         private System.Windows.Forms.TextBox TxtNlines;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ToolStripMenuItem gridCOORDParallelToBaselineToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem gridlinesParallelToBaselineToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem kMLOfGridlinesParallelToNorthToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem kMLOfGridlinesParallelToNorthToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem clearAllLayersToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem circleCenteredAtARPToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem kMLCircleCenteredAtARPToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem settingToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem modeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem northToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem baselineToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
+        private System.Windows.Forms.ToolStripMenuItem autoProcessToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem baselineModeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem northModeToolStripMenuItem;
     }
 }
 

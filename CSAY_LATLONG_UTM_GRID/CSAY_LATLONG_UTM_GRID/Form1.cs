@@ -15,6 +15,7 @@ using SharpKml.Dom;
 using SharpKml.Base;
 using SharpKml.Engine;
 using System.Reflection.Emit;
+using GMap.NET.MapProviders;
 
 namespace CSAY_LATLONG_UTM_GRID
 {
@@ -30,10 +31,10 @@ namespace CSAY_LATLONG_UTM_GRID
         private void FrmMainGrid_Load(object sender, EventArgs e)
         {
             dataGridView1.Rows.Clear();
-            for(int i =0; i <= 6; i++)
+            /*for(int i =0; i <= 6; i++)
             {
                 dataGridView1.Rows.Add();
-            }
+            }*/
 
             //For RWY
             string[] RWYList = System.IO.File.ReadAllLines(@".\ComboBoxList\AIRPORT_CODE_ICAO.txt");
@@ -66,6 +67,13 @@ namespace CSAY_LATLONG_UTM_GRID
             }
             //close the file
             sr.Close();
+
+            dataGridView1.Rows.Clear();
+            for(int i1 =0; i1 <= 6; i1++)
+            {
+                dataGridView1.Rows.Add();
+            }
+
             //load data to datagridview by splitting by tab character of coord of RWY
             for (int row = 2; row <= 6; row++)
             {
@@ -92,9 +100,9 @@ namespace CSAY_LATLONG_UTM_GRID
             dataGridView1.Rows[5].Cells[2].Value = "Mid AB";
             double temp_num1, temp_num2;
             temp_num1 = Convert.ToDouble(dataGridView1.Rows[1].Cells[3].Value);
-            temp_num2 = Convert.ToDouble(dataGridView1.Rows[1].Cells[3].Value);
+            temp_num2 = Convert.ToDouble(dataGridView1.Rows[2].Cells[3].Value);
             dataGridView1.Rows[5].Cells[3].Value = (temp_num1 + temp_num2) / 2;
-            temp_num1 = Convert.ToDouble(dataGridView1.Rows[2].Cells[4].Value);
+            temp_num1 = Convert.ToDouble(dataGridView1.Rows[1].Cells[4].Value);
             temp_num2 = Convert.ToDouble(dataGridView1.Rows[2].Cells[4].Value);
             dataGridView1.Rows[5].Cells[4].Value = (temp_num1 + temp_num2) / 2;
 
@@ -104,9 +112,9 @@ namespace CSAY_LATLONG_UTM_GRID
             dataGridView1.Rows[6].Cells[2].Value = "Mid CD";
 
             temp_num1 = Convert.ToDouble(dataGridView1.Rows[3].Cells[3].Value);
-            temp_num2 = Convert.ToDouble(dataGridView1.Rows[3].Cells[3].Value);
+            temp_num2 = Convert.ToDouble(dataGridView1.Rows[4].Cells[3].Value);
             dataGridView1.Rows[6].Cells[3].Value = (temp_num1 + temp_num2) / 2;
-            temp_num1 = Convert.ToDouble(dataGridView1.Rows[4].Cells[4].Value);
+            temp_num1 = Convert.ToDouble(dataGridView1.Rows[3].Cells[4].Value);
             temp_num2 = Convert.ToDouble(dataGridView1.Rows[4].Cells[4].Value);
             dataGridView1.Rows[6].Cells[4].Value = (temp_num1 + temp_num2) / 2;
 
@@ -512,22 +520,16 @@ namespace CSAY_LATLONG_UTM_GRID
         {
             //Drawing lines
             //show google map
-            double lat1, lat2, long1, long2, latav, longav;
+            double lat1, lat2, long1, long2;
 
-            lat1 = Convert.ToDouble(dataGridView1.Rows[5].Cells[3].Value);
-            long1 = Convert.ToDouble(dataGridView1.Rows[5].Cells[4].Value);
-
-            lat2 = Convert.ToDouble(dataGridView1.Rows[6].Cells[3].Value);
-            long2 = Convert.ToDouble(dataGridView1.Rows[6].Cells[4].Value);
-
-            latav = (lat1 + lat2) / 2;
-            longav = (long1 + long2) / 2;
+            lat1 = Convert.ToDouble(dataGridView1.Rows[0].Cells[3].Value);
+            long1 = Convert.ToDouble(dataGridView1.Rows[0].Cells[4].Value);
 
             GMap.NET.GMaps.Instance.Mode = GMap.NET.AccessMode.ServerAndCache;
             gMapControl1.DragButton = MouseButtons.Left;
             gMapControl1.MouseWheelZoomEnabled = true;
             gMapControl1.MapProvider = GMap.NET.MapProviders.GoogleSatelliteMapProvider.Instance;
-            gMapControl1.Position = new PointLatLng(latav, longav);
+            gMapControl1.Position = new PointLatLng(lat1, long1);
             gMapControl1.Zoom = 15;
 
             //Making red cross invisible
@@ -633,7 +635,7 @@ namespace CSAY_LATLONG_UTM_GRID
             var serializer = new Serializer();
             //string kmlfilename = Environment.CurrentDirectory + "\\KML_Files" + "\\ThisKML.kml";
             string kmlfilename = MyFolder + "ARP.kml";
-            FileStream fileStream = new FileStream(kmlfilename, FileMode.Append);
+            FileStream fileStream = new FileStream(kmlfilename, FileMode.OpenOrCreate);
             serializer.Serialize(kml, fileStream);
 
 
@@ -650,13 +652,14 @@ namespace CSAY_LATLONG_UTM_GRID
 
             ///Style 1
             SharpKml.Dom.LineStyle lineStyle = new SharpKml.Dom.LineStyle();
-            lineStyle.Color = Color32.Parse("#FF0000");
-            lineStyle.Width = 12;
+            lineStyle.Color = Color32.Parse("ff0000ff");
+            lineStyle.Width = 1;
 
             SharpKml.Dom.Style SimpleStyle = new SharpKml.Dom.Style();
             SimpleStyle.Id = "Style1";
             SimpleStyle.Line = lineStyle;
             document_Ver.AddStyle(SimpleStyle);
+
             for (int i = First_V_Row; i < Last_V_Row; i += 2)
             {
                 lat1 = Convert.ToDouble(dataGridView1.Rows[i].Cells[3].Value);
@@ -674,7 +677,7 @@ namespace CSAY_LATLONG_UTM_GRID
                 SharpKml.Dom.Placemark placemark_line = new SharpKml.Dom.Placemark();
                 placemark_line.Name = "GridLines_Vertical_" + i.ToString();
                 placemark_line.Geometry = linestring;
-
+                placemark_line.StyleUrl = new Uri("#Style1", UriKind.Relative);
                 document_Ver.AddFeature(placemark_line);
             }
 
@@ -684,7 +687,7 @@ namespace CSAY_LATLONG_UTM_GRID
                 Feature = document_Ver
             };
             string kmlfilenameV = MyFolder + "VerticalGridlines.kml";
-            FileStream fileStreamV = new FileStream(kmlfilenameV, FileMode.Append);
+            FileStream fileStreamV = new FileStream(kmlfilenameV, FileMode.OpenOrCreate);
             serializer.Serialize(kmlV, fileStreamV);
 
 
@@ -700,6 +703,17 @@ namespace CSAY_LATLONG_UTM_GRID
                 },
                 Name = "Horizontal Gridlines"
             };
+
+            //StyleH
+            SharpKml.Dom.LineStyle lineStyleH = new SharpKml.Dom.LineStyle();
+            lineStyleH.Color = Color32.Parse("ffff0000");//First two transparency; then Blue, green ,red
+            lineStyleH.Width = 1;
+
+            SharpKml.Dom.Style SimpleStyleH = new SharpKml.Dom.Style();
+            SimpleStyleH.Id = "StyleH";
+            SimpleStyleH.Line = lineStyleH;
+            document_Hz.AddStyle(SimpleStyleH);
+
             for (int i = First_Hz_Row; i < Last_Hz_Row; i += 2)
             {
                 lat1 = Convert.ToDouble(dataGridView1.Rows[i].Cells[3].Value);
@@ -717,6 +731,7 @@ namespace CSAY_LATLONG_UTM_GRID
                 SharpKml.Dom.Placemark placemark_line1 = new SharpKml.Dom.Placemark();
                 placemark_line1.Name = "GridLines_Horizontal_" + i.ToString();
                 placemark_line1.Geometry = linestring;
+                placemark_line1.StyleUrl = new Uri("#StyleH", UriKind.Relative);
 
                 document_Hz.AddFeature(placemark_line1);
             }
@@ -727,7 +742,7 @@ namespace CSAY_LATLONG_UTM_GRID
                 Feature = document_Hz
             };
             string kmlfilenameH = MyFolder + "Hz_Gridlines.kml";
-            FileStream fileStreamH = new FileStream(kmlfilenameH, FileMode.Append);
+            FileStream fileStreamH = new FileStream(kmlfilenameH, FileMode.OpenOrCreate);
             serializer.Serialize(kmlH, fileStreamH);
 
 
@@ -741,6 +756,17 @@ namespace CSAY_LATLONG_UTM_GRID
                 },
                 Name = "Origin Gridlines"
             };
+
+            ///StyleH
+            SharpKml.Dom.LineStyle lineStyleO = new SharpKml.Dom.LineStyle();
+            lineStyleO.Color = Color32.Parse("ff00ffff");//First two transparency; then Blue, green ,red
+            lineStyleO.Width = 2;
+
+            SharpKml.Dom.Style SimpleStyleO = new SharpKml.Dom.Style();
+            SimpleStyleO.Id = "StyleO";
+            SimpleStyleO.Line = lineStyleO;
+            document_Or.AddStyle(SimpleStyleO);
+
             for (int i = 7; i <= 10; i += 2)
             {
                 lat1 = Convert.ToDouble(dataGridView1.Rows[i].Cells[3].Value);
@@ -758,6 +784,7 @@ namespace CSAY_LATLONG_UTM_GRID
                 SharpKml.Dom.Placemark placemark_line2 = new SharpKml.Dom.Placemark();
                 placemark_line2.Name = "GridLines_Origin_" + i.ToString();
                 placemark_line2.Geometry = linestring;
+                placemark_line2.StyleUrl = new Uri("#StyleO", UriKind.Relative);
 
                 document_Or.AddFeature(placemark_line2);
             }
@@ -768,16 +795,99 @@ namespace CSAY_LATLONG_UTM_GRID
             };
             //string kmlfilename = Environment.CurrentDirectory + "\\KML_Files" + "\\ThisKML.kml";
             string kmlfilenameOr = MyFolder + "Origin Axes.kml";
-            FileStream fileStreamOr = new FileStream(kmlfilenameOr, FileMode.Append);
+            FileStream fileStreamOr = new FileStream(kmlfilenameOr, FileMode.OpenOrCreate);
             serializer.Serialize(kmlOr, fileStreamOr);
 
 
             MessageBox.Show("Successfully exported to KML");
         }
 
+        public void Clear_All_Surfaces()
+        {
+            int n_count;
+            //clear map
+            n_count = gMapControl1.Overlays.Count;
+            if (n_count > 0)
+            {
+                for (int i = 1; i <= n_count; i++)
+                {
+                    gMapControl1.Overlays.RemoveAt(0);
+                }
+            }
+
+            gMapControl1.Update();
+            gMapControl1.Refresh();
+        }
+
+        public void Draw_Full_CircleCircumference(double lat0, double long0, double r, int segments, Color Circle_Color, int Circle_Stroke)
+        {
+            try
+            {
+
+                double[] latlong1 = new double[2];
+                double aa, b, a1, b1, a_E, b_E;
+
+                double seg, theta;
+
+                CSAYMapGeoFunction CSAYGeoFun = new CSAYMapGeoFunction();
+
+                double a, one_by_f, K0, M0, lambda0, phi0_DD;
+                
+                phi0_DD = 0;
+                //Input parameters
+                a = 6378137.0;
+                one_by_f = 298.2572201;
+                K0 = 0.9996;
+                M0 = 0; //distance in meter of origin latitude from equator
+                lambda0 = 84;
+                double[] ARP_XY = new double[2];
+                a_E = lat0;
+                b_E = long0;
+
+                ARP_XY = CSAYGeoFun.Convert_LatLong_To_UTM(a_E, b_E, a, one_by_f, K0, M0, phi0_DD, lambda0);
+                aa = ARP_XY[0];
+                b = ARP_XY[1];
+
+
+                //convert latlong to UTM
+                double Fasle_Easting_X = 500000;
+                double[,] latlong2 = new double[segments, 2];
+                seg = (Math.PI * 2) / segments;//Math.PI * 2 / segments;
+                //plot_position = "Below";
+                for (int i = 0; i < segments; i++)
+                {
+                    theta = seg * i;
+                    a1 = aa + Math.Cos(theta) * r;
+                    b1 = b + Math.Sin(theta) * r;
+
+                    latlong1 =CSAYGeoFun.Convert_UTM_To_Latitude_Longitude(a1, b1, a, one_by_f, K0, M0, Fasle_Easting_X, lambda0);
+                    //points.Add(new PointLatLng(latlong1[0], latlong1[1]));
+                    latlong2[i, 0] = latlong1[0];
+                    latlong2[i, 1] = latlong1[1];
+
+                    if (i >= 1 && i < segments)
+                    DrawLinesWithTwoPoints(latlong2[i-1,0], latlong2[i-1,1], latlong2[i, 0], latlong2[i, 1], Circle_Color, Circle_Stroke);
+                }
+
+            }
+            catch
+            {
+
+            }
+        }
+
         private string CreateBaseAccessProjectFolders()
         {
-            string A_Code;
+            string A_Code, mode;
+
+            if(northToolStripMenuItem.Checked == true)
+            {
+                mode = "NorthGridLine";
+            }
+            else
+            {
+                mode = "BaseGridLine";
+            }
 
             if (TxtAirportCode.Text == "")
             {
@@ -788,7 +898,7 @@ namespace CSAY_LATLONG_UTM_GRID
                 A_Code = TxtAirportCode.Text;
             }
             
-           string Project_Folders = Environment.CurrentDirectory + "\\Grid_Project_Folders\\BaseGridLine\\" + A_Code + "\\";
+           string Project_Folders = Environment.CurrentDirectory + "\\Grid_Project_Folders\\" + mode +"\\" + A_Code + "\\";
 
             if (!Directory.Exists(Project_Folders))
             {
@@ -798,78 +908,191 @@ namespace CSAY_LATLONG_UTM_GRID
             return Project_Folders;
         }
 
-        private void DrawverticalGridLinesToolStripMenuItem_Click(object sender, EventArgs e)
+        private void clearAllLayersToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //Drawing lines
-            //show google map
-            double lat1, lat2, long1, long2, latav, longav;
+            Clear_All_Surfaces();
+        }
 
-            lat1 = Convert.ToDouble(dataGridView1.Rows[5].Cells[3].Value);
-            long1 = Convert.ToDouble(dataGridView1.Rows[5].Cells[4].Value);
-
-            lat2 = Convert.ToDouble(dataGridView1.Rows[6].Cells[3].Value);
-            long2 = Convert.ToDouble(dataGridView1.Rows[6].Cells[4].Value);
-
-            latav = (lat1 + lat2) / 2;
-            longav = (long1 + long2) / 2;
-
+        private void circleCenteredAtARPToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            double lat_ARP = Convert.ToDouble(dataGridView1.Rows[0].Cells[3].Value);
+            double long_ARP = Convert.ToDouble(dataGridView1.Rows[0].Cells[4].Value);
 
             GMap.NET.GMaps.Instance.Mode = GMap.NET.AccessMode.ServerAndCache;
             gMapControl1.DragButton = MouseButtons.Left;
             gMapControl1.MouseWheelZoomEnabled = true;
             gMapControl1.MapProvider = GMap.NET.MapProviders.GoogleSatelliteMapProvider.Instance;
-            gMapControl1.Position = new PointLatLng(latav, longav);
+            gMapControl1.Position = new PointLatLng(lat_ARP, long_ARP);
             gMapControl1.Zoom = 15;
 
             //Making red cross invisible
             gMapControl1.ShowCenter = false;
 
-            Color Linecolor;
-            int nline, LineStroke;
-            Linecolor = Color.Red;
-            LineStroke = 1;
-            nline = Convert.ToInt32(TxtNlines.Text);
-            for (int i = First_V_Row; i < Last_V_Row; i += 2)
-            {
-                lat1 = Convert.ToDouble(dataGridView1.Rows[i].Cells[3].Value);
-                long1 = Convert.ToDouble(dataGridView1.Rows[i].Cells[4].Value);
-
-                lat2 = Convert.ToDouble(dataGridView1.Rows[i + 1].Cells[3].Value);
-                long2 = Convert.ToDouble(dataGridView1.Rows[i + 1].Cells[4].Value);
-
-                DrawLinesWithTwoPoints(lat1, long1, lat2, long2, Linecolor, LineStroke);
-            }
-
-            Linecolor = Color.Blue;
-            LineStroke = 1;
-            nline = Convert.ToInt32(TxtNlines.Text);
-            for (int i = First_Hz_Row; i < Last_Hz_Row; i += 2)
-            {
-                lat1 = Convert.ToDouble(dataGridView1.Rows[i].Cells[3].Value);
-                long1 = Convert.ToDouble(dataGridView1.Rows[i].Cells[4].Value);
-
-                lat2 = Convert.ToDouble(dataGridView1.Rows[i + 1].Cells[3].Value);
-                long2 = Convert.ToDouble(dataGridView1.Rows[i + 1].Cells[4].Value);
-
-                DrawLinesWithTwoPoints(lat1, long1, lat2, long2, Linecolor, LineStroke);
-            }
-
-            //Draw origin vertical line
-            Linecolor = Color.Yellow;
-            LineStroke = 2;
-            nline = Convert.ToInt32(TxtNlines.Text);
-            for (int i = 7; i <= 10; i += 2)
-            {
-                lat1 = Convert.ToDouble(dataGridView1.Rows[i].Cells[3].Value);
-                long1 = Convert.ToDouble(dataGridView1.Rows[i].Cells[4].Value);
-
-                lat2 = Convert.ToDouble(dataGridView1.Rows[i + 1].Cells[3].Value);
-                long2 = Convert.ToDouble(dataGridView1.Rows[i + 1].Cells[4].Value);
-
-                DrawLinesWithTwoPoints(lat1, long1, lat2, long2, Linecolor, LineStroke);
-            }
+            Color mycolor = Color.DeepPink;
+            int Circle_Stroke= 3;
+            
+            double radius = Convert.ToDouble(TxtRadius.Text);
+            Draw_Full_CircleCircumference(lat_ARP, long_ARP, radius, 6000, mycolor, Circle_Stroke);
 
             gMapControl1.Zoom += 0.1;
+        }
+
+        private void baselineToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            baseLineEqParameterToolStripMenuItem.Enabled = true;
+            gridCOORDParallelToBaselineToolStripMenuItem.Enabled = true;
+
+            CalcverticalGridToolStripMenuItem.Enabled = false;
+
+            baselineModeToolStripMenuItem.Enabled = true;
+            northModeToolStripMenuItem.Enabled = false;
+
+            baselineToolStripMenuItem.Checked = true;
+            northToolStripMenuItem.Checked = false;
+
+            Clear_All_Surfaces();
+        }
+
+        private void northToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            baseLineEqParameterToolStripMenuItem.Enabled = false;
+            gridCOORDParallelToBaselineToolStripMenuItem.Enabled = false;
+
+            CalcverticalGridToolStripMenuItem.Enabled = true;
+
+            baselineModeToolStripMenuItem.Enabled = false;
+            northModeToolStripMenuItem.Enabled = true;
+
+            baselineToolStripMenuItem.Checked = false;
+            northToolStripMenuItem.Checked = true;
+
+            Clear_All_Surfaces();
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FrmAbout fabout = new FrmAbout();
+            fabout.Show();
+        }
+
+        private void baselineModeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LoadRWYdataStripMenuItem1_Click(sender, e);
+
+            baseLineEqParameterToolStripMenuItem_Click(sender, e);
+            gridCOORDParallelToBaselineToolStripMenuItem_Click(sender, e);
+
+            gridlinesParallelToBaselineToolStripMenuItem_Click(sender, e);
+            circleCenteredAtARPToolStripMenuItem_Click(sender, e);
+
+            kMLOfGridlinesParallelToNorthToolStripMenuItem1_Click(sender, e);
+            kMLCircleCenteredAtARPToolStripMenuItem_Click(sender, e);
+
+        }
+
+        private void northModeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LoadRWYdataStripMenuItem1_Click(sender, e);
+
+            CalcverticalGridToolStripMenuItem_Click(sender, e);
+
+            gridlinesParallelToBaselineToolStripMenuItem_Click(sender, e);
+            circleCenteredAtARPToolStripMenuItem_Click(sender, e);
+
+            kMLOfGridlinesParallelToNorthToolStripMenuItem1_Click(sender, e);
+            kMLCircleCenteredAtARPToolStripMenuItem_Click(sender, e);
+        }
+
+        private void kMLCircleCenteredAtARPToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string MyFolder = CreateBaseAccessProjectFolders();
+            var serializer = new Serializer();
+            List<PointLatLng> points = new List<PointLatLng>();
+
+            double[] latlong1 = new double[2];
+            double aa, b, a1, b1, a_E, b_E;
+            double seg, theta;
+            int segments = 6000;
+
+            CSAYMapGeoFunction CSAYGeoFun = new CSAYMapGeoFunction();
+            double a, one_by_f, K0, M0, lambda0, phi0_DD;
+            phi0_DD = 0;
+            //Input parameters
+            a = 6378137.0;
+            one_by_f = 298.2572201;
+            K0 = 0.9996;
+            M0 = 0; //distance in meter of origin latitude from equator
+            lambda0 = 84;
+
+            double[] ARP_XY = new double[2];
+            a_E = Convert.ToDouble(dataGridView1.Rows[0].Cells[3].Value);
+            b_E = Convert.ToDouble(dataGridView1.Rows[0].Cells[4].Value);
+            double r = Convert.ToDouble(TxtRadius.Text);
+            ARP_XY = CSAYGeoFun.Convert_LatLong_To_UTM(a_E, b_E, a, one_by_f, K0, M0, phi0_DD, lambda0);
+            aa = ARP_XY[0];
+            b = ARP_XY[1];
+
+            //Export to  KML
+            //Draw Bounding circle---------------------------------------------------------------------
+            var document_C = new SharpKml.Dom.Document
+            {
+                Description = new SharpKml.Dom.Description
+                {
+                    Text = "Doc Boundary circle"
+                },
+                Name = "Boundary circle"
+            };
+
+            ///StyleC
+            SharpKml.Dom.LineStyle lineStyleC = new SharpKml.Dom.LineStyle();
+            lineStyleC.Color = Color32.Parse("ff00ffff");//First two transparency; then Blue, green ,red
+            lineStyleC.Width = 2;
+
+            SharpKml.Dom.Style SimpleStyleC = new SharpKml.Dom.Style();
+            SimpleStyleC.Id = "StyleC";
+            SimpleStyleC.Line = lineStyleC;
+            document_C.AddStyle(SimpleStyleC);
+
+            LineString linestring = new LineString();
+            CoordinateCollection coordinates = new CoordinateCollection();
+
+            //convert latlong to UTM
+            double Fasle_Easting_X = 500000;
+            seg = (Math.PI * 2) / segments;//Math.PI * 2 / segments;
+            for (int i = 0; i < segments; i++)
+            {
+                theta = seg * i;
+                a1 = aa + Math.Cos(theta) * r;
+                b1 = b + Math.Sin(theta) * r;
+
+                latlong1 = CSAYGeoFun.Convert_UTM_To_Latitude_Longitude(a1, b1, a, one_by_f, K0, M0, Fasle_Easting_X, lambda0);
+                points.Add(new PointLatLng(latlong1[0], latlong1[1]));
+
+                coordinates.Add(new SharpKml.Base.Vector(latlong1[0], latlong1[1]));
+                
+            }
+
+            linestring.Coordinates = coordinates;
+            SharpKml.Dom.Placemark placemark_lineC = new SharpKml.Dom.Placemark();
+            placemark_lineC.Name = "BoundaryCircle";
+            placemark_lineC.Geometry = linestring;
+            placemark_lineC.StyleUrl = new Uri("#StyleC", UriKind.Relative);
+
+            document_C.AddFeature(placemark_lineC);
+
+            var kmlC = new Kml
+            {
+                Feature = document_C
+            };
+            //string kmlfilename = Environment.CurrentDirectory + "\\KML_Files" + "\\ThisKML.kml";
+            string kmlfilenameOr = MyFolder + "BoundaryCircle.kml";
+            FileStream fileStreamOr = new FileStream(kmlfilenameOr, FileMode.OpenOrCreate);
+            serializer.Serialize(kmlC, fileStreamOr);
+
+
+            MessageBox.Show("Boundary Circle successfully exported to KML");
+
+
         }
 
         public void DrawLinesWithTwoPoints(double lat1, double long1, double lat2, double long2, Color Linecolor, int LineStroke)
