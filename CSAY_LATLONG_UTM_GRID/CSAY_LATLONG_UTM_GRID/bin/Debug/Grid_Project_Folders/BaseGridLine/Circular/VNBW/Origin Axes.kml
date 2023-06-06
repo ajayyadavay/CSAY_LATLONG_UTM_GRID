@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Origin Gridlines</name>
+    <description>Doc Origin axes Gridlines</description>
+    <Style id="StyleO">
+      <LineStyle>
+        <color>ff00ffff</color>
+        <width>2</width>
+      </LineStyle>
+    </Style>
+    <Placemark>
+      <name>GridLines_Origin_7</name>
+      <styleUrl>#StyleO</styleUrl>
+      <LineString>
+        <coordinates>83.432022936883996,27.538547742716101
+83.419648914143195,27.467223771591101</coordinates>
+      </LineString>
+    </Placemark>
+    <Placemark>
+      <name>GridLines_Origin_9</name>
+      <styleUrl>#StyleO</styleUrl>
+      <LineString>
+        <coordinates>83.385837346359594,27.5083973750593
+83.465824690616103,27.497363581240201</coordinates>
+      </LineString>
+    </Placemark>
+  </Document>
+</kml>

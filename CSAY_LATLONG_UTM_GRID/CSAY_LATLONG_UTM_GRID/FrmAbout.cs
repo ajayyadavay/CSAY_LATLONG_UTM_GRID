@@ -23,7 +23,7 @@ namespace CSAY_LATLONG_UTM_GRID
             msg = "Created by Ajay Yadav" +
                 "\ngithub.com/ajayyadavay" +
                 "\n\nHow to use?" +
-                "\n1. Prepared text file as per given format" +
+                "\n1. Prepare text file as per given format" +
                 "\n2. File>Load RWY data" +
                 "\n3. Calculate> baseline parameter" +
                 "\n4. Calculate> Gridlines" +

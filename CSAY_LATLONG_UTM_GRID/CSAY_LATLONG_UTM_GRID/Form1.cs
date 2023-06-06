@@ -16,6 +16,8 @@ using SharpKml.Base;
 using SharpKml.Engine;
 using System.Reflection.Emit;
 using GMap.NET.MapProviders;
+using System.Diagnostics;
+using GMap.NET.Internals;
 
 namespace CSAY_LATLONG_UTM_GRID
 {
@@ -23,13 +25,32 @@ namespace CSAY_LATLONG_UTM_GRID
     {
         int First_V_Row, First_Hz_Row;
         int Last_V_Row, Last_Hz_Row;
+        bool IsFromSetting = false;
         public FrmMainGrid()
         {
             InitializeComponent();
         }
 
+        public void GenerateTreeViewInitial()
+        {
+            //Level 1
+            treeView1.Nodes.Add("GridBoundaryName", "Grid Boundary");    //0
+            //treeView1.Nodes.Add("Grid");    //1
+            treeView1.Nodes.Add("GridName", "Grid");
+
+            //level 1
+            treeView1.Nodes[0].Nodes.Add("CircleName","Circle");//0,0
+            treeView1.Nodes[0].Nodes.Add("RectangleName", "Rectangle");//0,1
+
+            treeView1.Nodes[1].Nodes.Add("GridlinesName", "Gridlines");//1,0
+
+            treeView1.ExpandAll();
+        }
+
         private void FrmMainGrid_Load(object sender, EventArgs e)
         {
+            GenerateTreeViewInitial();
+
             dataGridView1.Rows.Clear();
             /*for(int i =0; i <= 6; i++)
             {
@@ -130,7 +151,8 @@ namespace CSAY_LATLONG_UTM_GRID
             K0 = 0.9996;
             M0 = 0; //distance in meter of origin latitude from equator
             phi0_DD = 0;
-            lambda0_DD = 84;
+            //lambda0_DD = 84;
+            lambda0_DD = Convert.ToDouble(TxtCM.Text);
 
             for (int k = 0; k <= 6; k++)
             {
@@ -170,6 +192,7 @@ namespace CSAY_LATLONG_UTM_GRID
 
         private void CalcverticalGridToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            treeView1.Enabled = true;
             double e1, Ginterval, x, y, radius;
             double ARP_X, ARP_Y;
             int mx, my, NextRow;
@@ -183,6 +206,13 @@ namespace CSAY_LATLONG_UTM_GRID
             radius = Convert.ToDouble(TxtRadius.Text);
             Ginterval = Convert.ToDouble(TxtGridInterval.Text);
 
+
+            int totalrows_after_7 = (dataGridView1.RowCount - 1) - 7;
+            if (totalrows_after_7 > 7)
+            {
+                dataGridView1.Rows.Clear();
+                LoadRWYdataStripMenuItem1_Click(sender, e);
+            }
 
             //Calculate Origin Axes COORD
             NextRow = 7;
@@ -210,7 +240,8 @@ namespace CSAY_LATLONG_UTM_GRID
                 K0 = 0.9996;
                 M0 = 0; //distance in meter of origin latitude from equator
                 phi0_DD = 0;
-                lambda0 = 84;
+                //lambda0 = 84;
+                lambda0 = Convert.ToDouble(TxtCM.Text);
 
                 CSAYMapGeoFunction CSAYGeoFun = new CSAYMapGeoFunction();
                 latlong = CSAYGeoFun.Convert_UTM_To_Latitude_Longitude(x, y, a, one_by_f, K0, M0, Fasle_Easting_X, lambda0);
@@ -229,15 +260,28 @@ namespace CSAY_LATLONG_UTM_GRID
             double no_of_line = radius / Ginterval - 1;
             int nline = Convert.ToInt32(no_of_line);
             TxtNlines.Text = nline.ToString();
+
             //For vertical lines
             for (int k = 0; k < nline; k++)
             {
                 for (int i = 0; i <= 3; i++)
                 {
+                    
+
                     mx = LR_factor[i, 0];
                     my = LR_factor[i, 1];
                     double G1 = Ginterval * (k + 1);
-                    e1 = Math.Sqrt(radius * radius - G1 * G1);
+                    //e1 = Math.Sqrt(radius * radius - G1 * G1);
+                    e1 = 0;
+                    if (circularToolStripMenuItem.Checked == true)
+                    {
+                        e1 = Math.Sqrt(radius * radius - G1 * G1);
+                    }
+                    else if (rectangularToolStripMenuItem.Checked == true)
+                    {
+                        e1 = radius;
+                    }
+
                     x = ARP_X + G1 * mx;
                     y = ARP_Y + e1 * my;
 
@@ -257,7 +301,7 @@ namespace CSAY_LATLONG_UTM_GRID
                     K0 = 0.9996;
                     M0 = 0; //distance in meter of origin latitude from equator
                     phi0_DD = 0;
-                    lambda0 = 84;
+                    lambda0 = Convert.ToDouble(TxtCM.Text); //84
 
                     CSAYMapGeoFunction CSAYGeoFun = new CSAYMapGeoFunction();
                     latlong = CSAYGeoFun.Convert_UTM_To_Latitude_Longitude(x, y, a, one_by_f, K0, M0, Fasle_Easting_X, lambda0);
@@ -286,7 +330,17 @@ namespace CSAY_LATLONG_UTM_GRID
                     mx = LR_factor_H[i, 0];
                     my = LR_factor_H[i, 1];
                     double G1 = Ginterval * (k + 1);
-                    e1 = Math.Sqrt(radius * radius - G1 * G1);
+                    e1 = 0;
+                    if (circularToolStripMenuItem.Checked == true)
+                    {
+                        e1 = Math.Sqrt(radius * radius - G1 * G1);
+                    }
+                    else if (rectangularToolStripMenuItem.Checked == true)
+                    {
+                        e1 = radius;
+                    }
+
+                    //e1 = Math.Sqrt(radius * radius - G1 * G1);
                     x = ARP_X + e1 * mx;
                     y = ARP_Y + G1 * my;
 
@@ -306,7 +360,7 @@ namespace CSAY_LATLONG_UTM_GRID
                     K0 = 0.9996;
                     M0 = 0; //distance in meter of origin latitude from equator
                     phi0_DD = 0;
-                    lambda0 = 84;
+                    lambda0 = Convert.ToDouble(TxtCM.Text);   //84
 
                     CSAYMapGeoFunction CSAYGeoFun = new CSAYMapGeoFunction();
                     latlong = CSAYGeoFun.Convert_UTM_To_Latitude_Longitude(x, y, a, one_by_f, K0, M0, Fasle_Easting_X, lambda0);
@@ -319,6 +373,12 @@ namespace CSAY_LATLONG_UTM_GRID
                     NextRow++;
                 }
             }
+
+            if (treeView1.Nodes["GridName"].Nodes[0].Checked == true)
+            {
+                treeView1.Nodes["GridName"].Nodes[0].Checked = false;
+                treeView1.Nodes["GridName"].Nodes[0].Checked = true;
+            }
         }
 
         private void ComboBoxAirportCode_SelectedIndexChanged(object sender, EventArgs e)
@@ -328,8 +388,14 @@ namespace CSAY_LATLONG_UTM_GRID
 
         private void gridCOORDParallelToBaselineToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            treeView1.Enabled = true;
             CSAYMapGeoFunction CSAYGeoFun = new CSAYMapGeoFunction();
             double m, c;
+            double[] XY = new double[2];
+
+
+            double Center_X, Center_Y;
+            double Slope_Parallel_EF, Intercept_Parallel_EF, Slope_Perp_EF, Intercept_Perp_EF; 
 
             m = Convert.ToDouble(TxtslopeBase.Text);
             c = Convert.ToDouble(TxtInterceptBase.Text);
@@ -354,12 +420,17 @@ namespace CSAY_LATLONG_UTM_GRID
             G1 = perp_dist;
             double m1 = m;
             double c1  = CSAYGeoFun.Intercept_of_Parallel_line(m, c, G1, 1);
+            Slope_Parallel_EF = m1;
+            Intercept_Parallel_EF = c1;
             //MessageBox.Show("m1, c1 = " + m1.ToString() + "," + c1.ToString());
       
 
             //Eq of perpendicular line to EF i.e. vertical origin axis YY'
             double m2 = -1.0 / m;
             double c2 = ARP_Y - ARP_X * m2 ;
+
+            Slope_Perp_EF = m2;
+            Intercept_Perp_EF= c2;
             //MessageBox.Show("m2, c2 = " + m2.ToString() + "," + c2.ToString());
 
             double[] slopes = new double[] { m2, m2, m1, m1 };
@@ -368,6 +439,19 @@ namespace CSAY_LATLONG_UTM_GRID
             NextRow = 7;
             string[] Pt_Name_O = new string[] { "Y", "Y1", "X1", "X" };
             int[] O_fac_X = new int[] { 1, -1, -1, 1 };
+
+            int totalrows_after_7 = (dataGridView1.RowCount - 1) - 7;
+            if ( totalrows_after_7 > 7)
+            {
+                dataGridView1.Rows.Clear();
+                LoadRWYdataStripMenuItem1_Click(sender, e);
+                /*for(int k = 0; k < totalrows_after_7; k++)
+                {
+                    int lastrow_index = (dataGridView1.RowCount - 1) - 7 - 1;
+                    dataGridView1.Rows.RemoveAt(lastrow_index);
+                }*/
+            }
+            //MessageBox.Show("rows no. = " + (dataGridView1.RowCount - 1).ToString());
             for (int k = 0; k <= 3; k++)
             {
                 x = CSAYGeoFun.Find_Quadratic_X(slopes[k], intercepts[k], ARP_X, ARP_Y, radius, O_fac_X[k]);
@@ -388,7 +472,7 @@ namespace CSAY_LATLONG_UTM_GRID
                 K0 = 0.9996;
                 M0 = 0; //distance in meter of origin latitude from equator
                 phi0_DD = 0;
-                lambda0 = 84;
+                lambda0 = Convert.ToDouble(TxtCM.Text);//84
 
                 latlong = CSAYGeoFun.Convert_UTM_To_Latitude_Longitude(x, y, a, one_by_f, K0, M0, Fasle_Easting_X, lambda0);
                 dataGridView1.Rows[NextRow].Cells[3].Value = latlong[0].ToString();
@@ -401,7 +485,7 @@ namespace CSAY_LATLONG_UTM_GRID
             }
 
             //Gridlines other than origin
-            int[] LR_factor = new int[] { 1, -1};
+            int[] LR_factor = new int[] { 1, -1};//find xplus and xminus
             string[] Pt_Name = new string[] { "Quad_I_", "Quad_IV_", "Quad_II_", "Quad_III_" };
             NextRow = 11;
             First_V_Row = NextRow;
@@ -410,7 +494,7 @@ namespace CSAY_LATLONG_UTM_GRID
             int pti;
             TxtNlines.Text = nline.ToString();
             //For vertical lines
-            
+
             for (int k = 0; k < nline; k++)
             {
                 G1 = Ginterval * (k + 1);
@@ -426,8 +510,22 @@ namespace CSAY_LATLONG_UTM_GRID
                         //my = LR_factor[i, 1];
 
                         //G1 = Ginterval * (k + 1);
+                        Center_X = 0.0;
+                        Center_Y = 0.0;
+                        if (circularToolStripMenuItem.Checked == true)
+                        {
+                            Center_X = ARP_X;
+                            Center_Y = ARP_Y;
+                        }
+                        else if (rectangularToolStripMenuItem.Checked == true)
+                        {
+                            XY = CSAYGeoFun.Find_Intersection_XY(Slope_Parallel_EF, Intercept_Parallel_EF, Slope_Perp_EF, intrcpt[j]);
+                            Center_X = XY[0];
+                            Center_Y = XY[1];
+                        }
+                        
 
-                        x = CSAYGeoFun.Find_Quadratic_X(m2, intrcpt[j], ARP_X, ARP_Y, radius, LR_factor[i]);
+                        x = CSAYGeoFun.Find_Quadratic_X(m2, intrcpt[j], Center_X, Center_Y, radius, LR_factor[i]);
                         y = m2 * x + intrcpt[j];
 
                         dataGridView1.Rows.Add();
@@ -446,7 +544,7 @@ namespace CSAY_LATLONG_UTM_GRID
                         K0 = 0.9996;
                         M0 = 0; //distance in meter of origin latitude from equator
                         phi0_DD = 0;
-                        lambda0 = 84;
+                        lambda0 = Convert.ToDouble(TxtCM.Text);
 
                         latlong = CSAYGeoFun.Convert_UTM_To_Latitude_Longitude(x, y, a, one_by_f, K0, M0, Fasle_Easting_X, lambda0);
                         dataGridView1.Rows[NextRow].Cells[3].Value = latlong[0].ToString();
@@ -476,11 +574,25 @@ namespace CSAY_LATLONG_UTM_GRID
                 intrcpt[0] = CSAYGeoFun.Intercept_of_Parallel_line(m1, c1, G1, 1);
                 intrcpt[1] = CSAYGeoFun.Intercept_of_Parallel_line(m1, c1, G1, -1);
                 pti = 0;
+                Center_X = 0.0;
+                Center_Y = 0.0;
                 for (int j = 0; j<=1; j++)
                 {
                     for (int i = 0; i <= 1; i++)
                     {
-                        x = CSAYGeoFun.Find_Quadratic_X(m1, intrcpt[j], ARP_X, ARP_Y, radius, LR_factor[i]);
+                        if (circularToolStripMenuItem.Checked == true)
+                        {
+                            Center_X = ARP_X;
+                            Center_Y = ARP_Y;
+                        }
+                        else if (rectangularToolStripMenuItem.Checked == true)
+                        {
+                            XY = CSAYGeoFun.Find_Intersection_XY(Slope_Perp_EF, Intercept_Perp_EF, Slope_Parallel_EF, intrcpt[j]);
+                            Center_X = XY[0];
+                            Center_Y = XY[1];
+                        }
+
+                        x = CSAYGeoFun.Find_Quadratic_X(m1, intrcpt[j], Center_X, Center_Y, radius, LR_factor_H[i]);
                         y = m1 * x + intrcpt[j];
 
                         dataGridView1.Rows.Add();
@@ -499,7 +611,7 @@ namespace CSAY_LATLONG_UTM_GRID
                         K0 = 0.9996;
                         M0 = 0; //distance in meter of origin latitude from equator
                         phi0_DD = 0;
-                        lambda0 = 84;
+                        lambda0 = Convert.ToDouble(TxtCM.Text);
 
                         latlong = CSAYGeoFun.Convert_UTM_To_Latitude_Longitude(x, y, a, one_by_f, K0, M0, Fasle_Easting_X, lambda0);
                         dataGridView1.Rows[NextRow].Cells[3].Value = latlong[0].ToString();
@@ -514,9 +626,18 @@ namespace CSAY_LATLONG_UTM_GRID
                 
             }
 
+            if (treeView1.Nodes["GridName"].Nodes[0].Checked == true)
+            {
+                treeView1.Nodes["GridName"].Nodes[0].Checked = false;
+                treeView1.Nodes["GridName"].Nodes[0].Checked = true;
+            }
+            
+
+
+
         }
 
-        private void gridlinesParallelToBaselineToolStripMenuItem_Click(object sender, EventArgs e)
+        private void DrawGridlines()
         {
             //Drawing lines
             //show google map
@@ -538,7 +659,7 @@ namespace CSAY_LATLONG_UTM_GRID
             Color Linecolor;
             int nline, LineStroke;
             nline = Convert.ToInt32(TxtNlines.Text);
-            
+
             //Vertical lines
             Linecolor = Color.Red;
             LineStroke = 1;
@@ -584,6 +705,11 @@ namespace CSAY_LATLONG_UTM_GRID
             }
 
             gMapControl1.Zoom += 0.1;
+        }
+
+        private void gridlinesParallelToBaselineToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            
         }
 
         private void kMLOfGridlinesParallelToNorthToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -839,7 +965,7 @@ namespace CSAY_LATLONG_UTM_GRID
                 one_by_f = 298.2572201;
                 K0 = 0.9996;
                 M0 = 0; //distance in meter of origin latitude from equator
-                lambda0 = 84;
+                lambda0 = Convert.ToDouble(TxtCM.Text);
                 double[] ARP_XY = new double[2];
                 a_E = lat0;
                 b_E = long0;
@@ -897,8 +1023,17 @@ namespace CSAY_LATLONG_UTM_GRID
             {
                 A_Code = TxtAirportCode.Text;
             }
-            
-           string Project_Folders = Environment.CurrentDirectory + "\\Grid_Project_Folders\\" + mode +"\\" + A_Code + "\\";
+            string GB;
+            if (circularToolStripMenuItem.Checked == true)
+            {
+                GB = "Circular";
+            }
+            else
+            {
+                GB = "Rectangular";
+            }
+
+            string Project_Folders = Environment.CurrentDirectory + "\\Grid_Project_Folders\\" + mode +"\\" + GB + "\\" + A_Code + "\\";
 
             if (!Directory.Exists(Project_Folders))
             {
@@ -913,7 +1048,7 @@ namespace CSAY_LATLONG_UTM_GRID
             Clear_All_Surfaces();
         }
 
-        private void circleCenteredAtARPToolStripMenuItem_Click(object sender, EventArgs e)
+        private void DrawCircleBoundary()
         {
             double lat_ARP = Convert.ToDouble(dataGridView1.Rows[0].Cells[3].Value);
             double long_ARP = Convert.ToDouble(dataGridView1.Rows[0].Cells[4].Value);
@@ -929,16 +1064,53 @@ namespace CSAY_LATLONG_UTM_GRID
             gMapControl1.ShowCenter = false;
 
             Color mycolor = Color.DeepPink;
-            int Circle_Stroke= 3;
-            
+            int Circle_Stroke = 3;
+
             double radius = Convert.ToDouble(TxtRadius.Text);
             Draw_Full_CircleCircumference(lat_ARP, long_ARP, radius, 6000, mycolor, Circle_Stroke);
 
             gMapControl1.Zoom += 0.1;
         }
 
+        private void DrawSelectiveGrids(int cr, int glines)
+        {
+            Clear_All_Surfaces();
+            if(cr == 1)
+            {
+                DrawCircleBoundary();
+            }
+            if (glines == 1)
+            {
+                DrawGridlines();
+            }
+        }
+
+        private void circleCenteredAtARPToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
         private void baselineToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            IsFromSetting = true;
+
+            lblModestatus.Text = "Mode Setting: " + baselineToolStripMenuItem.Text;
+
+            int totalrows_after_7 = (dataGridView1.RowCount - 1) - 7;
+            if (totalrows_after_7 > 7)
+            {
+                dataGridView1.Rows.Clear();
+                LoadRWYdataStripMenuItem1_Click(sender, e);
+            }
+            
+            //MessageBox.Show("after reload");
+            treeView1.Nodes["GridBoundaryName"].Nodes[0].Checked = false;
+            //MessageBox.Show("circle");
+            treeView1.Nodes["GridBoundaryName"].Nodes[1].Checked = false;
+            //MessageBox.Show("after rectangle");
+            treeView1.Nodes["GridName"].Nodes[0].Checked = false;
+            //MessageBox.Show("after grid");
+
             baseLineEqParameterToolStripMenuItem.Enabled = true;
             gridCOORDParallelToBaselineToolStripMenuItem.Enabled = true;
 
@@ -951,10 +1123,27 @@ namespace CSAY_LATLONG_UTM_GRID
             northToolStripMenuItem.Checked = false;
 
             Clear_All_Surfaces();
+
+            IsFromSetting = false;
         }
 
         private void northToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            IsFromSetting = true;
+
+            lblModestatus.Text = "Mode Setting: " + northToolStripMenuItem.Text;
+
+            int totalrows_after_7 = (dataGridView1.RowCount - 1) - 7;
+            if (totalrows_after_7 > 7)
+            {
+                dataGridView1.Rows.Clear();
+                LoadRWYdataStripMenuItem1_Click(sender, e);
+            }
+
+            treeView1.Nodes["GridBoundaryName"].Nodes[0].Checked = false;
+            treeView1.Nodes["GridBoundaryName"].Nodes[1].Checked = false;
+            treeView1.Nodes["GridName"].Nodes[0].Checked = false;
+
             baseLineEqParameterToolStripMenuItem.Enabled = false;
             gridCOORDParallelToBaselineToolStripMenuItem.Enabled = false;
 
@@ -967,6 +1156,8 @@ namespace CSAY_LATLONG_UTM_GRID
             northToolStripMenuItem.Checked = true;
 
             Clear_All_Surfaces();
+
+            IsFromSetting = false;
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -982,8 +1173,11 @@ namespace CSAY_LATLONG_UTM_GRID
             baseLineEqParameterToolStripMenuItem_Click(sender, e);
             gridCOORDParallelToBaselineToolStripMenuItem_Click(sender, e);
 
-            gridlinesParallelToBaselineToolStripMenuItem_Click(sender, e);
-            circleCenteredAtARPToolStripMenuItem_Click(sender, e);
+            treeView1.Nodes["GridBoundaryName"].Nodes[0].Checked = true;
+            treeView1.Nodes["GridName"].Nodes[0].Checked = true;
+
+            //gridlinesParallelToBaselineToolStripMenuItem_Click(sender, e);
+            //circleCenteredAtARPToolStripMenuItem_Click(sender, e);
 
             kMLOfGridlinesParallelToNorthToolStripMenuItem1_Click(sender, e);
             kMLCircleCenteredAtARPToolStripMenuItem_Click(sender, e);
@@ -996,11 +1190,59 @@ namespace CSAY_LATLONG_UTM_GRID
 
             CalcverticalGridToolStripMenuItem_Click(sender, e);
 
-            gridlinesParallelToBaselineToolStripMenuItem_Click(sender, e);
-            circleCenteredAtARPToolStripMenuItem_Click(sender, e);
+            treeView1.Nodes["GridBoundaryName"].Nodes[0].Checked = true;
+            treeView1.Nodes["GridName"].Nodes[0].Checked = true;
+
+            //gridlinesParallelToBaselineToolStripMenuItem_Click(sender, e);
+            //circleCenteredAtARPToolStripMenuItem_Click(sender, e);
 
             kMLOfGridlinesParallelToNorthToolStripMenuItem1_Click(sender, e);
             kMLCircleCenteredAtARPToolStripMenuItem_Click(sender, e);
+        }
+
+        private void circularToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            rectangularToolStripMenuItem.Checked = false;
+            circularToolStripMenuItem.Checked = true;
+
+            lblGBstatus.Text = "Grid Boundary Setting: " + circularToolStripMenuItem.Text;
+        }
+
+        private void rectangularToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            rectangularToolStripMenuItem.Checked = true;
+            circularToolStripMenuItem.Checked = false;
+
+            lblGBstatus.Text = "Grid Boundary Setting: " + rectangularToolStripMenuItem.Text;
+
+        }
+
+        private void treeView1_AfterCheck(object sender, TreeViewEventArgs e)
+        {
+            int cr, glines;
+            
+            if (treeView1.Nodes["GridBoundaryName"].Nodes[0].Checked == true)
+            {
+                cr = 1;
+            }
+            else
+            {
+                cr = 0;
+            }
+
+            if (treeView1.Nodes["GridName"].Nodes[0].Checked == true)
+            {
+                glines = 1;
+            }
+            else
+            {
+                glines = 0;
+            }
+
+            if (IsFromSetting == false)
+            {
+                DrawSelectiveGrids(cr, glines);
+            }
         }
 
         private void kMLCircleCenteredAtARPToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1022,7 +1264,7 @@ namespace CSAY_LATLONG_UTM_GRID
             one_by_f = 298.2572201;
             K0 = 0.9996;
             M0 = 0; //distance in meter of origin latitude from equator
-            lambda0 = 84;
+            lambda0 = Convert.ToDouble(TxtCM.Text);
 
             double[] ARP_XY = new double[2];
             a_E = Convert.ToDouble(dataGridView1.Rows[0].Cells[3].Value);
