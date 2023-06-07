@@ -40,7 +40,7 @@ namespace CSAY_LATLONG_UTM_GRID
 
             //level 1
             treeView1.Nodes[0].Nodes.Add("CircleName","Circle");//0,0
-            treeView1.Nodes[0].Nodes.Add("RectangleName", "Rectangle");//0,1
+            //treeView1.Nodes[0].Nodes.Add("RectangleName", "Rectangle");//0,1
 
             treeView1.Nodes[1].Nodes.Add("GridlinesName", "Gridlines");//1,0
 
@@ -257,7 +257,15 @@ namespace CSAY_LATLONG_UTM_GRID
             //Gridlines other than origin
             NextRow = 11;
             First_V_Row = NextRow;
-            double no_of_line = radius / Ginterval - 1;
+            double no_of_line = 0.0;
+            if (circularToolStripMenuItem.Checked == true)
+            {
+                no_of_line = radius / Ginterval - 1;
+            }
+            else if (rectangularToolStripMenuItem.Checked == true)
+            {
+                no_of_line = radius / Ginterval - 1 + 1;
+            }
             int nline = Convert.ToInt32(no_of_line);
             TxtNlines.Text = nline.ToString();
 
@@ -480,7 +488,15 @@ namespace CSAY_LATLONG_UTM_GRID
 
                 dataGridView1.Rows[NextRow].Cells[0].Value = NextRow.ToString();
                 dataGridView1.Rows[NextRow].Cells[1].Value = Pt_Name_O[k].ToString();
-                dataGridView1.Rows[NextRow].Cells[2].Value = "Incl Origin Axis";
+                if(NextRow == 7 || NextRow == 8)
+                {
+                    dataGridView1.Rows[NextRow].Cells[2].Value = "Inclined Perpendicular Axis";
+                }
+                else
+                {
+                    dataGridView1.Rows[NextRow].Cells[2].Value = "Inclined Parallel Axis";
+                }
+                
                 NextRow++;
             }
 
@@ -489,7 +505,16 @@ namespace CSAY_LATLONG_UTM_GRID
             string[] Pt_Name = new string[] { "Quad_I_", "Quad_IV_", "Quad_II_", "Quad_III_" };
             NextRow = 11;
             First_V_Row = NextRow;
-            double no_of_line = radius / Ginterval - 1;
+            double no_of_line = 0.0;
+            if (circularToolStripMenuItem.Checked == true)
+            {
+                no_of_line = radius / Ginterval - 1;
+            }
+            else if (rectangularToolStripMenuItem.Checked == true)
+            {
+                no_of_line = radius / Ginterval - 1 + 1;
+            }
+
             int nline = Convert.ToInt32(no_of_line);
             int pti;
             TxtNlines.Text = nline.ToString();
@@ -552,7 +577,7 @@ namespace CSAY_LATLONG_UTM_GRID
 
                         dataGridView1.Rows[NextRow].Cells[0].Value = NextRow.ToString();
                         dataGridView1.Rows[NextRow].Cells[1].Value = Pt_Name[pti].ToString() + pti.ToString();
-                        dataGridView1.Rows[NextRow].Cells[2].Value = "Incl Vertical Axis";
+                        dataGridView1.Rows[NextRow].Cells[2].Value = "Inclined Perpendicular (RED) Axis"; //Vertical axis w.r.t. VNBW
                         NextRow++;
                         pti++;
                     }
@@ -619,7 +644,7 @@ namespace CSAY_LATLONG_UTM_GRID
 
                         dataGridView1.Rows[NextRow].Cells[0].Value = NextRow.ToString();
                         dataGridView1.Rows[NextRow].Cells[1].Value = Pt_Name_H[pti].ToString() + pti.ToString();
-                        dataGridView1.Rows[NextRow].Cells[2].Value = "Incl Horizontal Axis";
+                        dataGridView1.Rows[NextRow].Cells[2].Value = "Inclined Parallel (Blue) Axis";//Horizontal parallel w.r.t. VNBW
                         NextRow++;
                     }
                 }
@@ -637,6 +662,7 @@ namespace CSAY_LATLONG_UTM_GRID
 
         }
 
+
         private void DrawGridlines()
         {
             //Drawing lines
@@ -651,7 +677,7 @@ namespace CSAY_LATLONG_UTM_GRID
             gMapControl1.MouseWheelZoomEnabled = true;
             gMapControl1.MapProvider = GMap.NET.MapProviders.GoogleSatelliteMapProvider.Instance;
             gMapControl1.Position = new PointLatLng(lat1, long1);
-            gMapControl1.Zoom = 15;
+            gMapControl1.Zoom = 13;
 
             //Making red cross invisible
             gMapControl1.ShowCenter = false;
@@ -1058,7 +1084,7 @@ namespace CSAY_LATLONG_UTM_GRID
             gMapControl1.MouseWheelZoomEnabled = true;
             gMapControl1.MapProvider = GMap.NET.MapProviders.GoogleSatelliteMapProvider.Instance;
             gMapControl1.Position = new PointLatLng(lat_ARP, long_ARP);
-            gMapControl1.Zoom = 15;
+            gMapControl1.Zoom = 13;
 
             //Making red cross invisible
             gMapControl1.ShowCenter = false;
@@ -1085,10 +1111,7 @@ namespace CSAY_LATLONG_UTM_GRID
             }
         }
 
-        private void circleCenteredAtARPToolStripMenuItem_Click(object sender, EventArgs e)
-        {
 
-        }
 
         private void baselineToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1106,7 +1129,7 @@ namespace CSAY_LATLONG_UTM_GRID
             //MessageBox.Show("after reload");
             treeView1.Nodes["GridBoundaryName"].Nodes[0].Checked = false;
             //MessageBox.Show("circle");
-            treeView1.Nodes["GridBoundaryName"].Nodes[1].Checked = false;
+            //treeView1.Nodes["GridBoundaryName"].Nodes[1].Checked = false;
             //MessageBox.Show("after rectangle");
             treeView1.Nodes["GridName"].Nodes[0].Checked = false;
             //MessageBox.Show("after grid");
@@ -1141,7 +1164,7 @@ namespace CSAY_LATLONG_UTM_GRID
             }
 
             treeView1.Nodes["GridBoundaryName"].Nodes[0].Checked = false;
-            treeView1.Nodes["GridBoundaryName"].Nodes[1].Checked = false;
+            //treeView1.Nodes["GridBoundaryName"].Nodes[1].Checked = false;
             treeView1.Nodes["GridName"].Nodes[0].Checked = false;
 
             baseLineEqParameterToolStripMenuItem.Enabled = false;
@@ -1219,7 +1242,7 @@ namespace CSAY_LATLONG_UTM_GRID
 
         private void treeView1_AfterCheck(object sender, TreeViewEventArgs e)
         {
-            int cr, glines;
+            int cr, glines, rec;
             
             if (treeView1.Nodes["GridBoundaryName"].Nodes[0].Checked == true)
             {

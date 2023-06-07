@@ -31,7 +31,11 @@ namespace CSAY_LATLONG_UTM_GRID
                 "\n6. Export gridlines and cricle" +
                 "\n\nNote1: You can change the mode as per requirement" +
                 "\nNote2: Mode North means one gridlines will be parallel to North" +
-                "\nNote3: Mode Baseline means one gridlines will be parallel to baseline";
+                "\nNote3: Mode Baseline means one gridlines will be parallel to baseline" +
+                "\nNote4: Grid boundary Circular means boundary will be circular" +
+                "\nNote5: Grid boundary Rectangular means boundary will be Rectangular" +
+                "\nNote6: Parallel axis (Blue colored) means axis parallel to centerline of RWY CL" +
+                "\nNote7: Perpendicular axis (Red colored) means axis perpendicular to RWY CL";
             label1.Text = msg;
         }
 
