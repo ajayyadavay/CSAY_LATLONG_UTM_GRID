@@ -18,6 +18,7 @@ using System.Reflection.Emit;
 using GMap.NET.MapProviders;
 using System.Diagnostics;
 using GMap.NET.Internals;
+using static GMap.NET.Entity.OpenStreetMapGraphHopperRouteEntity;
 
 namespace CSAY_LATLONG_UTM_GRID
 {
@@ -40,7 +41,7 @@ namespace CSAY_LATLONG_UTM_GRID
 
             //level 1
             treeView1.Nodes[0].Nodes.Add("CircleName","Circle");//0,0
-            //treeView1.Nodes[0].Nodes.Add("RectangleName", "Rectangle");//0,1
+            treeView1.Nodes[0].Nodes.Add("CircularPolygonName", "Circle Polygon");//0,1
 
             treeView1.Nodes[1].Nodes.Add("GridlinesName", "Gridlines");//1,0
 
@@ -1074,6 +1075,131 @@ namespace CSAY_LATLONG_UTM_GRID
             Clear_All_Surfaces();
         }
 
+        public void Draw_Full_Circle(double r, int segments, Color Circle_Color)
+        {
+            try
+            {
+                //show google map
+                GMap.NET.GMaps.Instance.Mode = GMap.NET.AccessMode.ServerAndCache;
+                gMapControl1.DragButton = MouseButtons.Left;
+                gMapControl1.MouseWheelZoomEnabled = true;
+                gMapControl1.MapProvider = GMap.NET.MapProviders.GoogleSatelliteMapProvider.Instance;
+                //gMapControl1.Zoom = 13;
+
+                //Making red cross invisible
+                gMapControl1.ShowCenter = false;
+
+                //Draw Polygon
+                GMapOverlay polygons = new GMapOverlay("polygons");
+                List<PointLatLng> points = new List<PointLatLng>();
+
+
+                double[] latlong1 = new double[2];
+
+
+                double aa, b, a1, b1, a_E, b_E, a_F, b_F;
+                //int segments;
+
+                double seg, theta;
+                //segments = 6000;
+
+                //Input of center E
+                /*a_E = Convert.ToDouble(dataGridView1.Rows[4].Cells["ColEasting"].Value);//E
+                b_E = Convert.ToDouble(dataGridView1.Rows[4].Cells["ColNorthing"].Value);//E
+
+                a_F = Convert.ToDouble(dataGridView1.Rows[5].Cells["ColEasting"].Value);//E
+                b_F = Convert.ToDouble(dataGridView1.Rows[5].Cells["ColNorthing"].Value);//E
+
+                a = (a_E + a_F) / 2;
+                b = (b_E + b_F) / 2;*/
+
+                double lat_ARP = Convert.ToDouble(dataGridView1.Rows[0].Cells[3].Value);
+                double long_ARP = Convert.ToDouble(dataGridView1.Rows[0].Cells[4].Value);
+
+                double[] ARP_XY = new double[2];
+                a_E = lat_ARP;
+                b_E = long_ARP;
+                //ARP_XY = Convert_LatLong_To_UTM(a_E, b_E);
+                //a = ARP_XY[0];
+                //b = ARP_XY[1];
+
+
+                CSAYMapGeoFunction CSAYGeoFun = new CSAYMapGeoFunction();
+
+                double a, one_by_f, K0, M0, lambda0, phi0_DD;
+
+                phi0_DD = 0;
+                //Input parameters
+                a = 6378137.0;
+                one_by_f = 298.2572201;
+                K0 = 0.9996;
+                M0 = 0; //distance in meter of origin latitude from equator
+                lambda0 = Convert.ToDouble(TxtCM.Text);
+                //double[] ARP_XY = new double[2];
+                //a_E = lat0;
+                //b_E = long0;
+                double Fasle_Easting_X = 500000;
+
+                ARP_XY = CSAYGeoFun.Convert_LatLong_To_UTM(a_E, b_E, a, one_by_f, K0, M0, phi0_DD, lambda0);
+                aa = ARP_XY[0];
+                b = ARP_XY[1];
+
+
+                seg = (Math.PI * 2) / segments;//Math.PI * 2 / segments;
+                //plot_position = "Below";
+                for (int i = 0; i < segments; i++)
+                {
+                    theta = seg * i;
+                    a1 = aa + Math.Cos(theta) * r;
+                    b1 = b + Math.Sin(theta) * r;
+
+                    latlong1 = CSAYGeoFun.Convert_UTM_To_Latitude_Longitude(a1, b1, a, one_by_f, K0, M0, Fasle_Easting_X, lambda0);
+                    points.Add(new PointLatLng(latlong1[0], latlong1[1]));
+
+                }
+
+                GMap.NET.WindowsForms.GMapPolygon polygon = new GMap.NET.WindowsForms.GMapPolygon(points, "CirclePoly");
+                polygons.Polygons.Add(polygon);
+                gMapControl1.Overlays.Add(polygons);
+                polygon.Fill = new SolidBrush(Color.FromArgb(50, Circle_Color));
+                polygon.Stroke = new Pen(Circle_Color, 0);
+
+                gMapControl1.Invalidate();
+                gMapControl1.Update();
+                gMapControl1.Refresh();
+
+            }
+            catch
+            {
+
+            }
+        }
+
+        private void DrawCirclePolygonBoundary()
+        {
+            double lat_ARP = Convert.ToDouble(dataGridView1.Rows[0].Cells[3].Value);
+            double long_ARP = Convert.ToDouble(dataGridView1.Rows[0].Cells[4].Value);
+
+            GMap.NET.GMaps.Instance.Mode = GMap.NET.AccessMode.ServerAndCache;
+            gMapControl1.DragButton = MouseButtons.Left;
+            gMapControl1.MouseWheelZoomEnabled = true;
+            gMapControl1.MapProvider = GMap.NET.MapProviders.GoogleSatelliteMapProvider.Instance;
+            gMapControl1.Position = new PointLatLng(lat_ARP, long_ARP);
+            gMapControl1.Zoom = 13;
+
+            //Making red cross invisible
+            gMapControl1.ShowCenter = false;
+
+            Color mycolor = Color.WhiteSmoke;
+            //int Circle_Stroke = 3;
+
+            double radius = Convert.ToDouble(TxtRadius.Text);
+            Draw_Full_Circle(radius, 6000, mycolor);
+
+            gMapControl1.Zoom += 0.1;
+        }
+
+
         private void DrawCircleBoundary()
         {
             double lat_ARP = Convert.ToDouble(dataGridView1.Rows[0].Cells[3].Value);
@@ -1098,12 +1224,16 @@ namespace CSAY_LATLONG_UTM_GRID
             gMapControl1.Zoom += 0.1;
         }
 
-        private void DrawSelectiveGrids(int cr, int glines)
+        private void DrawSelectiveGrids(int cr, int glines, int cpoly)
         {
             Clear_All_Surfaces();
             if(cr == 1)
             {
                 DrawCircleBoundary();
+            }
+            if (cpoly == 1)
+            {
+                DrawCirclePolygonBoundary();
             }
             if (glines == 1)
             {
@@ -1129,7 +1259,7 @@ namespace CSAY_LATLONG_UTM_GRID
             //MessageBox.Show("after reload");
             treeView1.Nodes["GridBoundaryName"].Nodes[0].Checked = false;
             //MessageBox.Show("circle");
-            //treeView1.Nodes["GridBoundaryName"].Nodes[1].Checked = false;
+            treeView1.Nodes["GridBoundaryName"].Nodes[1].Checked = false;
             //MessageBox.Show("after rectangle");
             treeView1.Nodes["GridName"].Nodes[0].Checked = false;
             //MessageBox.Show("after grid");
@@ -1164,7 +1294,7 @@ namespace CSAY_LATLONG_UTM_GRID
             }
 
             treeView1.Nodes["GridBoundaryName"].Nodes[0].Checked = false;
-            //treeView1.Nodes["GridBoundaryName"].Nodes[1].Checked = false;
+            treeView1.Nodes["GridBoundaryName"].Nodes[1].Checked = false;
             treeView1.Nodes["GridName"].Nodes[0].Checked = false;
 
             baseLineEqParameterToolStripMenuItem.Enabled = false;
@@ -1197,6 +1327,7 @@ namespace CSAY_LATLONG_UTM_GRID
             gridCOORDParallelToBaselineToolStripMenuItem_Click(sender, e);
 
             treeView1.Nodes["GridBoundaryName"].Nodes[0].Checked = true;
+            treeView1.Nodes["GridBoundaryName"].Nodes[1].Checked = true;
             treeView1.Nodes["GridName"].Nodes[0].Checked = true;
 
             //gridlinesParallelToBaselineToolStripMenuItem_Click(sender, e);
@@ -1204,6 +1335,8 @@ namespace CSAY_LATLONG_UTM_GRID
 
             kMLOfGridlinesParallelToNorthToolStripMenuItem1_Click(sender, e);
             kMLCircleCenteredAtARPToolStripMenuItem_Click(sender, e);
+            kMLCirclePolygonCenteredAtARPToolStripMenuItem_Click(sender, e);
+            kMLExtremePointsToolStripMenuItem_Click(sender, e);
 
         }
 
@@ -1214,6 +1347,7 @@ namespace CSAY_LATLONG_UTM_GRID
             CalcverticalGridToolStripMenuItem_Click(sender, e);
 
             treeView1.Nodes["GridBoundaryName"].Nodes[0].Checked = true;
+            treeView1.Nodes["GridBoundaryName"].Nodes[1].Checked = true;
             treeView1.Nodes["GridName"].Nodes[0].Checked = true;
 
             //gridlinesParallelToBaselineToolStripMenuItem_Click(sender, e);
@@ -1221,6 +1355,8 @@ namespace CSAY_LATLONG_UTM_GRID
 
             kMLOfGridlinesParallelToNorthToolStripMenuItem1_Click(sender, e);
             kMLCircleCenteredAtARPToolStripMenuItem_Click(sender, e);
+            kMLCirclePolygonCenteredAtARPToolStripMenuItem_Click(sender, e);
+            kMLExtremePointsToolStripMenuItem_Click(sender, e);
         }
 
         private void circularToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1242,7 +1378,7 @@ namespace CSAY_LATLONG_UTM_GRID
 
         private void treeView1_AfterCheck(object sender, TreeViewEventArgs e)
         {
-            int cr, glines, rec;
+            int cr, glines, cpoly;
             
             if (treeView1.Nodes["GridBoundaryName"].Nodes[0].Checked == true)
             {
@@ -1251,6 +1387,15 @@ namespace CSAY_LATLONG_UTM_GRID
             else
             {
                 cr = 0;
+            }
+
+            if (treeView1.Nodes["GridBoundaryName"].Nodes[1].Checked == true)
+            {
+                cpoly = 1;
+            }
+            else
+            {
+                cpoly = 0;
             }
 
             if (treeView1.Nodes["GridName"].Nodes[0].Checked == true)
@@ -1264,8 +1409,404 @@ namespace CSAY_LATLONG_UTM_GRID
 
             if (IsFromSetting == false)
             {
-                DrawSelectiveGrids(cr, glines);
+                DrawSelectiveGrids(cr, glines, cpoly);
             }
+        }
+
+        private void kMLCirclePolygonCenteredAtARPToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string MyFolder = CreateBaseAccessProjectFolders();
+            var serializer = new Serializer();
+
+            List<Polygon> lPolygon = new List<Polygon>();
+            Polygon mPolygon = new Polygon();
+            OuterBoundary outerBoundary = new OuterBoundary();
+            outerBoundary.LinearRing = new LinearRing();
+            outerBoundary.LinearRing.Coordinates = new CoordinateCollection();
+
+            List<PointLatLng> points = new List<PointLatLng>();
+
+            double[] latlong1 = new double[2];
+            double aa, b, a1, b1, a_E, b_E;
+            double seg, theta;
+            int segments = 6000;
+
+            CSAYMapGeoFunction CSAYGeoFun = new CSAYMapGeoFunction();
+            double a, one_by_f, K0, M0, lambda0, phi0_DD;
+            phi0_DD = 0;
+            //Input parameters
+            a = 6378137.0;
+            one_by_f = 298.2572201;
+            K0 = 0.9996;
+            M0 = 0; //distance in meter of origin latitude from equator
+            lambda0 = Convert.ToDouble(TxtCM.Text);
+
+            double[] ARP_XY = new double[2];
+            a_E = Convert.ToDouble(dataGridView1.Rows[0].Cells[3].Value);
+            b_E = Convert.ToDouble(dataGridView1.Rows[0].Cells[4].Value);
+            double r = Convert.ToDouble(TxtRadius.Text);
+            ARP_XY = CSAYGeoFun.Convert_LatLong_To_UTM(a_E, b_E, a, one_by_f, K0, M0, phi0_DD, lambda0);
+            aa = ARP_XY[0];
+            b = ARP_XY[1];
+
+            //Export to  KML
+            //Draw Bounding circle Polygon---------------------------------------------------------------------
+            var document_CP = new SharpKml.Dom.Document
+            {
+                Description = new SharpKml.Dom.Description
+                {
+                    Text = "Doc Boundary circle Polygon"
+                },
+                Name = "Boundary circle Polygon"
+            };
+
+            ///StyleCP
+            SharpKml.Dom.LineStyle lineStyleCP = new SharpKml.Dom.LineStyle();
+            lineStyleCP.Color = Color32.Parse("ff00ffff");//First two transparency; then Blue, green ,red
+            lineStyleCP.Width = 2;
+
+            SharpKml.Dom.PolygonStyle PolyStyleCP = new SharpKml.Dom.PolygonStyle();
+            PolyStyleCP.Color = Color32.Parse("ff0f0f0f");//First two transparency; then Blue, green ,red
+            
+
+            SharpKml.Dom.Style SimpleStyleCP = new SharpKml.Dom.Style();
+            SimpleStyleCP.Id = "StyleCP";
+            SimpleStyleCP.Line = lineStyleCP;
+            SimpleStyleCP.Polygon = PolyStyleCP;
+            document_CP.AddStyle(SimpleStyleCP);
+
+            //GMapOverlay polygons = new GMapOverlay("polygons");
+
+            //LineString linestring = new LineString();
+            //Polygon poly = new Polygon();
+            //CoordinateCollection coordinates = new CoordinateCollection();
+
+            //convert latlong to UTM
+            double Fasle_Easting_X = 500000;
+            seg = (Math.PI * 2) / segments;//Math.PI * 2 / segments;
+            for (int i = 0; i < segments; i++)
+            {
+                theta = seg * i;
+                a1 = aa + Math.Cos(theta) * r;
+                b1 = b + Math.Sin(theta) * r;
+
+                latlong1 = CSAYGeoFun.Convert_UTM_To_Latitude_Longitude(a1, b1, a, one_by_f, K0, M0, Fasle_Easting_X, lambda0);
+                points.Add(new PointLatLng(latlong1[0], latlong1[1]));
+
+                //coordinates.Add(new SharpKml.Base.Vector(latlong1[0], latlong1[1]));
+                outerBoundary.LinearRing.Coordinates.Add(new SharpKml.Base.Vector(latlong1[0], latlong1[1]));
+
+            }
+
+            mPolygon.OuterBoundary = outerBoundary;
+            lPolygon.Add(mPolygon);
+
+            //linestring.Coordinates = coordinates;
+            //poly.Coordinates = coordinates;
+
+            SharpKml.Dom.Placemark placemark_lineCP = new SharpKml.Dom.Placemark();
+            placemark_lineCP.Name = "BoundaryCirclePolygon";
+            placemark_lineCP.Geometry = mPolygon;
+            //placemark_lineC.Geometry = poly;
+            placemark_lineCP.StyleUrl = new Uri("#StyleCP", UriKind.Relative);
+
+            document_CP.AddFeature(placemark_lineCP);
+
+            var kmlCP = new Kml
+            {
+                Feature = document_CP
+            };
+            //string kmlfilename = Environment.CurrentDirectory + "\\KML_Files" + "\\ThisKML.kml";
+            string kmlfilenameCP = MyFolder + "BoundaryCirclePolygon.kml";
+            FileStream fileStreamCP = new FileStream(kmlfilenameCP, FileMode.OpenOrCreate);
+            serializer.Serialize(kmlCP, fileStreamCP);
+
+
+            MessageBox.Show("Boundary Circle Polygon successfully exported to KML");
+        }
+
+        private void kMLExtremePointsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            double lat1, long1, lat2, long2, lat_ARP, Long_ARP;
+            string MyFolder = CreateBaseAccessProjectFolders();
+           
+            var serializer = new Serializer();
+
+            //Vertical i.e., perpendicular points
+            var document_VP = new SharpKml.Dom.Document
+            {
+                Description = new SharpKml.Dom.Description
+                {
+                    Text = "Doc Points of Vertical Gridlines Perpendicular to Base line"
+                },
+                Name = "VP_" + TxtAirportCode.Text + "_Points"
+            };
+
+            // This will be used for the placemark-----------------
+
+            for (int i = First_V_Row; i <= Last_V_Row; i++)
+            {
+                lat1 = Convert.ToDouble(dataGridView1.Rows[i].Cells[3].Value);
+                long1 = Convert.ToDouble(dataGridView1.Rows[i].Cells[4].Value);
+                SharpKml.Dom.Point ptV = new SharpKml.Dom.Point();
+
+                ptV.Coordinate = new SharpKml.Base.Vector(lat1, long1);
+                SharpKml.Dom.Placemark placemark_VP = new SharpKml.Dom.Placemark();
+                placemark_VP.Name = "Extreme_VPoints-" + i.ToString();
+                placemark_VP.Geometry = ptV;
+                document_VP.AddFeature(placemark_VP);
+               
+            }
+
+            // This is the root element of the file--------------------------
+            var kmlVP = new Kml
+            {
+                Feature = document_VP
+            };
+            //var serializer = new Serializer();
+            //string kmlfilename = Environment.CurrentDirectory + "\\KML_Files" + "\\ThisKML.kml";
+            string kmlfilenameVP = MyFolder + "PerpendicularPoints.kml";
+            FileStream fileStreamVP = new FileStream(kmlfilenameVP, FileMode.OpenOrCreate);
+            serializer.Serialize(kmlVP, fileStreamVP);
+
+
+
+            //Horizontal i.e., parallel points
+            var document_HP = new SharpKml.Dom.Document
+            {
+                Description = new SharpKml.Dom.Description
+                {
+                    Text = "Doc Points of Horizontal Gridlines Parallel to Base line"
+                },
+                Name = "HP_" + TxtAirportCode.Text + "_Points"
+            };
+
+            // This will be used for the placemark-----------------
+
+            for (int i = First_Hz_Row; i <= Last_Hz_Row; i++)
+            {
+                lat1 = Convert.ToDouble(dataGridView1.Rows[i].Cells[3].Value);
+                long1 = Convert.ToDouble(dataGridView1.Rows[i].Cells[4].Value);
+
+                SharpKml.Dom.Point ptH = new SharpKml.Dom.Point();
+                ptH.Coordinate = new SharpKml.Base.Vector(lat1, long1);
+                SharpKml.Dom.Placemark placemark_HP = new SharpKml.Dom.Placemark();
+                placemark_HP.Name = "Extreme_HPoints-" + i.ToString();
+                placemark_HP.Geometry = ptH;
+                document_HP.AddFeature(placemark_HP);
+            }
+
+            // This is the root element of the file--------------------------
+            var kmlHP = new Kml
+            {
+                Feature = document_HP
+            };
+            //var serializer = new Serializer();
+            //string kmlfilename = Environment.CurrentDirectory + "\\KML_Files" + "\\ThisKML.kml";
+            string kmlfilenameHP = MyFolder + "ParallelPoints.kml";
+            FileStream fileStreamHP = new FileStream(kmlfilenameHP, FileMode.OpenOrCreate);
+            serializer.Serialize(kmlHP, fileStreamHP);
+
+
+
+            //Origin points
+            var document_OP = new SharpKml.Dom.Document
+            {
+                Description = new SharpKml.Dom.Description
+                {
+                    Text = "Doc Points of Origin axes"
+                },
+                Name = "OP_" + TxtAirportCode.Text + "_Points"
+            };
+
+            // This will be used for the placemark-----------------
+
+            for (int i = 7; i <= 10; i++)
+            {
+                lat1 = Convert.ToDouble(dataGridView1.Rows[i].Cells[3].Value);
+                long1 = Convert.ToDouble(dataGridView1.Rows[i].Cells[4].Value);
+
+                SharpKml.Dom.Point ptO = new SharpKml.Dom.Point();
+                ptO.Coordinate = new SharpKml.Base.Vector(lat1, long1);
+                SharpKml.Dom.Placemark placemark_OP = new SharpKml.Dom.Placemark();
+                placemark_OP.Name = "Extreme_OPoints-" + i.ToString();
+                placemark_OP.Geometry = ptO;
+                document_OP.AddFeature(placemark_OP);
+            }
+
+            // This is the root element of the file--------------------------
+            var kmlOP = new Kml
+            {
+                Feature = document_OP
+            };
+            //var serializer = new Serializer();
+            //string kmlfilename = Environment.CurrentDirectory + "\\KML_Files" + "\\ThisKML.kml";
+            string kmlfilenameOP = MyFolder + "OriginAxesPoints.kml";
+            FileStream fileStreamOP = new FileStream(kmlfilenameOP, FileMode.OpenOrCreate);
+            serializer.Serialize(kmlOP, fileStreamOP);
+
+
+            /*
+            //Vertical lines
+            var document_Ver_pts = new SharpKml.Dom.Document
+            {
+                Description = new SharpKml.Dom.Description
+                {
+                    Text = "Doc Points of Vertical Gridlines Perpendicular to Base line"
+                },
+                Name = "Vertical Gridlines Extreme points"
+            };
+
+            ///Style 1
+            SharpKml.Dom.LineStyle lineStyle = new SharpKml.Dom.LineStyle();
+            lineStyle.Color = Color32.Parse("ff0000ff");
+            lineStyle.Width = 1;
+
+            SharpKml.Dom.Style SimpleStyle = new SharpKml.Dom.Style();
+            SimpleStyle.Id = "Style1";
+            SimpleStyle.Line = lineStyle;
+            document_Ver_pts.AddStyle(SimpleStyle);
+
+            for (int i = First_V_Row; i < Last_V_Row; i += 2)
+            {
+                lat1 = Convert.ToDouble(dataGridView1.Rows[i].Cells[3].Value);
+                long1 = Convert.ToDouble(dataGridView1.Rows[i].Cells[4].Value);
+
+                lat2 = Convert.ToDouble(dataGridView1.Rows[i + 1].Cells[3].Value);
+                long2 = Convert.ToDouble(dataGridView1.Rows[i + 1].Cells[4].Value);
+
+                LineString linestring = new LineString();
+                CoordinateCollection coordinates = new CoordinateCollection();
+                coordinates.Add(new SharpKml.Base.Vector(lat1, long1));
+                coordinates.Add(new SharpKml.Base.Vector(lat2, long2));
+
+                linestring.Coordinates = coordinates;
+                SharpKml.Dom.Placemark placemark_line = new SharpKml.Dom.Placemark();
+                placemark_line.Name = "GridLines_Vertical_" + i.ToString();
+                placemark_line.Geometry = linestring;
+                placemark_line.StyleUrl = new Uri("#Style1", UriKind.Relative);
+                document_Ver_pts.AddFeature(placemark_line);
+            }
+
+            //folder_GL.AddFeature(document_Ver);
+            var kmlV = new Kml
+            {
+                Feature = document_Ver_pts
+            };
+            string kmlfilenameV = MyFolder + "VerticalGridlines.kml";
+            FileStream fileStreamV = new FileStream(kmlfilenameV, FileMode.OpenOrCreate);
+            serializer.Serialize(kmlV, fileStreamV);
+
+
+
+
+
+            //Horizontal lines-------------------------------------------------------------------------
+            var document_Hz = new SharpKml.Dom.Document
+            {
+                Description = new SharpKml.Dom.Description
+                {
+                    Text = "Doc Horizontal Gridlines Parallel to Base line"
+                },
+                Name = "Horizontal Gridlines"
+            };
+
+            //StyleH
+            SharpKml.Dom.LineStyle lineStyleH = new SharpKml.Dom.LineStyle();
+            lineStyleH.Color = Color32.Parse("ffff0000");//First two transparency; then Blue, green ,red
+            lineStyleH.Width = 1;
+
+            SharpKml.Dom.Style SimpleStyleH = new SharpKml.Dom.Style();
+            SimpleStyleH.Id = "StyleH";
+            SimpleStyleH.Line = lineStyleH;
+            document_Hz.AddStyle(SimpleStyleH);
+
+            for (int i = First_Hz_Row; i < Last_Hz_Row; i += 2)
+            {
+                lat1 = Convert.ToDouble(dataGridView1.Rows[i].Cells[3].Value);
+                long1 = Convert.ToDouble(dataGridView1.Rows[i].Cells[4].Value);
+
+                lat2 = Convert.ToDouble(dataGridView1.Rows[i + 1].Cells[3].Value);
+                long2 = Convert.ToDouble(dataGridView1.Rows[i + 1].Cells[4].Value);
+
+                LineString linestring = new LineString();
+                CoordinateCollection coordinates = new CoordinateCollection();
+                coordinates.Add(new SharpKml.Base.Vector(lat1, long1));
+                coordinates.Add(new SharpKml.Base.Vector(lat2, long2));
+
+                linestring.Coordinates = coordinates;
+                SharpKml.Dom.Placemark placemark_line1 = new SharpKml.Dom.Placemark();
+                placemark_line1.Name = "GridLines_Horizontal_" + i.ToString();
+                placemark_line1.Geometry = linestring;
+                placemark_line1.StyleUrl = new Uri("#StyleH", UriKind.Relative);
+
+                document_Hz.AddFeature(placemark_line1);
+            }
+            //folder_GL.AddFeature(document_Hz);
+
+            var kmlH = new Kml
+            {
+                Feature = document_Hz
+            };
+            string kmlfilenameH = MyFolder + "Hz_Gridlines.kml";
+            FileStream fileStreamH = new FileStream(kmlfilenameH, FileMode.OpenOrCreate);
+            serializer.Serialize(kmlH, fileStreamH);
+
+
+
+            //Draw origin line---------------------------------------------------------------------
+            var document_Or = new SharpKml.Dom.Document
+            {
+                Description = new SharpKml.Dom.Description
+                {
+                    Text = "Doc Origin axes Gridlines"
+                },
+                Name = "Origin Gridlines"
+            };
+
+            ///StyleH
+            SharpKml.Dom.LineStyle lineStyleO = new SharpKml.Dom.LineStyle();
+            lineStyleO.Color = Color32.Parse("ff00ffff");//First two transparency; then Blue, green ,red
+            lineStyleO.Width = 2;
+
+            SharpKml.Dom.Style SimpleStyleO = new SharpKml.Dom.Style();
+            SimpleStyleO.Id = "StyleO";
+            SimpleStyleO.Line = lineStyleO;
+            document_Or.AddStyle(SimpleStyleO);
+
+            for (int i = 7; i <= 10; i += 2)
+            {
+                lat1 = Convert.ToDouble(dataGridView1.Rows[i].Cells[3].Value);
+                long1 = Convert.ToDouble(dataGridView1.Rows[i].Cells[4].Value);
+
+                lat2 = Convert.ToDouble(dataGridView1.Rows[i + 1].Cells[3].Value);
+                long2 = Convert.ToDouble(dataGridView1.Rows[i + 1].Cells[4].Value);
+
+                LineString linestring = new LineString();
+                CoordinateCollection coordinates = new CoordinateCollection();
+                coordinates.Add(new SharpKml.Base.Vector(lat1, long1));
+                coordinates.Add(new SharpKml.Base.Vector(lat2, long2));
+
+                linestring.Coordinates = coordinates;
+                SharpKml.Dom.Placemark placemark_line2 = new SharpKml.Dom.Placemark();
+                placemark_line2.Name = "GridLines_Origin_" + i.ToString();
+                placemark_line2.Geometry = linestring;
+                placemark_line2.StyleUrl = new Uri("#StyleO", UriKind.Relative);
+
+                document_Or.AddFeature(placemark_line2);
+            }
+            //folder_GL.AddFeature(document_Or);
+            var kmlOr = new Kml
+            {
+                Feature = document_Or
+            };
+            //string kmlfilename = Environment.CurrentDirectory + "\\KML_Files" + "\\ThisKML.kml";
+            string kmlfilenameOr = MyFolder + "Origin Axes.kml";
+            FileStream fileStreamOr = new FileStream(kmlfilenameOr, FileMode.OpenOrCreate);
+            serializer.Serialize(kmlOr, fileStreamOr);*/
+
+
+            MessageBox.Show("Extreme points Successfully exported to KML");
         }
 
         private void kMLCircleCenteredAtARPToolStripMenuItem_Click(object sender, EventArgs e)
