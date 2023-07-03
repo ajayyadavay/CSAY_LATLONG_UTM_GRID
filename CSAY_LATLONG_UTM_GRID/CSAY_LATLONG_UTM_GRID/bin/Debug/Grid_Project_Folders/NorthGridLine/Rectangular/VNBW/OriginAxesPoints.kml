@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>OP_VNBW_Points</name>
+    <description>Doc Points of Origin axes</description>
+    <Placemark>
+      <name>Extreme_OPoints-7</name>
+      <Point>
+        <coordinates>83.418826056364495,27.5434303687463</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <name>Extreme_OPoints-8</name>
+      <Point>
+        <coordinates>83.4172476894624,27.471271417460201</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <name>Extreme_OPoints-9</name>
+      <Point>
+        <coordinates>83.377571872618603,27.508048799225001</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <name>Extreme_OPoints-10</name>
+      <Point>
+        <coordinates>83.458498934881305,27.506641443102701</coordinates>
+      </Point>
+    </Placemark>
+  </Document>
+</kml>
